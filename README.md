@@ -1,17 +1,21 @@
-## Cài đặt môi trường phía backend
+# Cài đặt môi trường phía backend
 
-# Cài đặt express
+## Cài đặt express
 
     $ npm install express
 
-# Cài đặt nodemon (live server), dotenv (biến môi trường), babel (biên dịch Javascript -> ES6)
+## Cài đặt nodemon (live server), dotenv (biến môi trường), babel (biên dịch Javascript -> ES6)
 
-    $ npm install --save-dev nodemon babel-cli babel-preset-env babel-preset-stage-0 dotenv
+    $ npm i --save-dev nodemon babel-cli babel-preset-env babel-preset-stage-0 dotenv
 
-# Cài đặt mongoose (connect đến database)
+## Cài đặt mongoose (connect đến database)
 
-    $npm install mongoose
+    $ npm install mongoose
 
-# Cài đặt cors (Public API cho client sử dụng)
+## Cài đặt cors (Public API cho client sử dụng)
 
     $ npm install cors
+
+## Cài đặt multer (Upload file)
+
+    $ npm install --save multer
