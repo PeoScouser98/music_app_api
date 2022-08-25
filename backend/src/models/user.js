@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { createHmac } from "crypto";
 import "dotenv/config";
+
 const userSchema = mongoose.Schema({
 	email: {
 		type: String,

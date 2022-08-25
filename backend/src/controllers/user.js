@@ -1,5 +1,7 @@
 import User from "../models/user";
 import jwt from "jsonwebtoken";
+import "dotenv/config";
+import transporter from "../utils/verifyAccount";
 
 export const signin = async (req, res) => {
 	try {
@@ -32,6 +34,8 @@ export const signin = async (req, res) => {
 		});
 	}
 };
+
+// đăng ký
 export const signup = async (req, res) => {
 	try {
 		const account = await User.findOne({ email: req.body.email }).exec();
@@ -39,20 +43,51 @@ export const signup = async (req, res) => {
 			return res.status(400).json({
 				message: "Tài khoản đã tồn tại",
 			});
-		else {
-			const newAccount = await new User(req.body).save();
-			res.status(200).json({
-				account: {
-					email: newAccount.email,
-					username: newAccount.username,
-					role: newAccount.role,
-				},
-			});
-		}
+		const token = jwt.sign(req.body, process.env.JWT_ACTIVATE_KEY, { expiresIn: "5m" });
+		await transporter.sendMail(
+			{
+				from: process.env.AUTH_EMAIL,
+				to: req.body.email,
+				subject: "Xác thực tài khoản",
+				html: /*html */ `<h3>Sử dụng link này để kích hoạt tài khoản</h3>
+					<p><a href=${process.env.ACTIVATE_URL}?token=${token}>Link kích hoạt</a> </p>`,
+			},
+			(error, infor) => {
+				if (error) {
+					res.status(400).json({
+						message: `Error: ${error}`,
+					});
+				} else {
+					res.status(200).json({
+						message: `Email sent: ${infor.response}`,
+					});
+				}
+			},
+		);
 	} catch (error) {
 		res.status(400).json({
 			message: "Đăng ký không thành công",
 			error: error,
+		});
+	}
+};
+export const activateAccount = async (req, res) => {
+	try {
+		const decodedToken = jwt.verify(req.body.token, process.env.JWT_ACTIVATE_KEY);
+		if (!decodedToken) {
+			return res.status(400).json({
+				message: "Link xác thực đã hết hạn hoặc không tồn tại",
+			});
+		}
+		const newAccount = await new User(decodedToken).save();
+		res.status(200).json({
+			email: newAccount.email,
+			username: newAccount.username,
+			role: newAccount.role,
+		});
+	} catch (error) {
+		res.status(400).json({
+			message: "Link xác thực tài khoản không tồn tại",
 		});
 	}
 };

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Đăng nhập</title>
+	</head>
+	<style>
+		body {
+			font-family: roboto;
+		}
+		form {
+			max-width: 500px;
+			margin: 0 auto;
+		}
+		.form-control {
+			display: flex;
+			flex-direction: column;
+			gap: 0.5rem;
+			margin-bottom: 1rem;
+		}
+		button,
+		input {
+			padding: 0.5rem 1rem;
+			border-radius: 0.2rem;
+			border: 1px solid lightgray;
+		}
+	</style>
+	<body>
+		<h1 style="text-align: center">Đăng nhập</h1>
+		<form action="" onsubmit="signin(event)">
+			<div>
+				<div class="form-control">
+					<label for="">Email</label>
+					<input type="email" name="email" />
+				</div>
+
+				<div class="form-control">
+					<label for="">Mật khẩu</label>
+					<input type="password" name="password" />
+				</div>
+				<button type="submit">Đăng nhập</button>
+			</div>
+		</form>
+		<script>
+			const signin = async (event) => {
+				event.preventDefault();
+				const email = event.target["email"];
+				const password = event.target["password"];
+				// validate -> ok
+				const data = {
+					email: email.value,
+					password: password.value,
+				};
+
+				await fetch("http://localhost:8080/api/signin", {
+					method: "POST",
+					mode: "cors",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify(data),
+				})
+					.then((res) => {
+						return res.json();
+					})
+					.then((data) => {
+						console.log(data);
+						document.cookie = `token=${data.token}`;
+					});
+			};
+		</script>
+	</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Đăng ký</title>
+	</head>
+	<style>
+		body {
+			font-family: roboto;
+		}
+		form {
+			max-width: 500px;
+			margin: 0 auto;
+		}
+		.form-control {
+			display: flex;
+			flex-direction: column;
+			gap: 0.5rem;
+			margin-bottom: 1rem;
+		}
+		button,
+		input {
+			padding: 0.5rem 1rem;
+			border-radius: 0.2rem;
+			border: 1px solid lightgray;
+		}
+		.modal-verify-account {
+			background-color: rgba(0, 0, 0, 0.8);
+			min-width: 100%;
+			min-height: 100vh;
+			position: fixed;
+			top: 0;
+			right: 0;
+			display: none;
+		}
+		.modal-verify-account__box {
+			background-color: #fff;
+			padding: 1.5rem;
+			border-radius: 1rem;
+			display: flex;
+			flex-direction: column;
+			gap: 0.5rem;
+			min-width: 24rem;
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+		}
+	</style>
+	<body>
+		<h1 style="text-align: center">Đăng ký</h1>
+		<form action="" class="form--signup" onsubmit="signup(event)">
+			<div>
+				<div class="form-control">
+					<label for="">Email</label>
+					<input type="email" name="email" />
+				</div>
+				<div class="form-control">
+					<label for="">Tên của bạn</label>
+					<input type="text" name="username" />
+				</div>
+				<div class="form-control">
+					<label for="">Mật khẩu</label>
+					<input type="password" name="password" />
+				</div>
+				<button type="submit">Đăng ký</button>
+			</div>
+		</form>
+
+		<script>
+			const signup = async (event) => {
+				event.preventDefault();
+				const email = event.target["email"];
+				const username = event.target["username"];
+				const password = event.target["password"];
+				// validate -> ok
+				const data = {
+					email: email.value,
+					username: username.value,
+					password: password.value,
+				};
+				try {
+					const response = await fetch("http://localhost:8080/api/signup", {
+						method: "POST",
+						mode: "cors",
+						headers: {
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify(data),
+					});
+					if (!response.ok) {
+						alert("Đăng ký thất bại!");
+						return;
+					}
+					alert("check email để kích hoạt tài khoản");
+
+					const result = await response.json();
+					console.log(result);
+				} catch (error) {
+					console.log(error);
+				}
+			};
+		</script>
+	</body>
+</html>
