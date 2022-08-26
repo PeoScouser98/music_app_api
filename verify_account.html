@@ -3,7 +3,7 @@
 		const params = new URLSearchParams(window.location.search);
 		if (params.has("token")) {
 			try {
-				const response = await fetch("http://localhost:8080/api/activate-account", {
+				const response = await fetch("http://localhost:3001/api/activate-account", {
 					method: "POST",
 					mode: "cors",
 					headers: {
