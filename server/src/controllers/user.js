@@ -11,10 +11,10 @@ export const signin = async (req, res) => {
 				message: "Tài khoản không tồn tại",
 			});
 		if (!account.authenticate(req.body.password))
-			res.status(404).json({
+			res.status(400).json({
 				message: "Mật khẩu không đúng",
 			});
-		const token = jwt.sign({ id: account._id }, process.env.PRIVATE_KEY, { expiresIn: 60 * 60 });
+		const token = jwt.sign({ id: account._id }, process.env.PRIVATE_KEY, { expiresIn: "1d" });
 		/**
 		 * sign(data + secret_key) => token
 		 * verify(token + secret_key) => data
@@ -24,7 +24,7 @@ export const signin = async (req, res) => {
 			token,
 			account: {
 				id: account._id,
-				email: account.email,
+				role: account.role,
 			},
 		});
 	} catch (error) {
