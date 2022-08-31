@@ -16,7 +16,7 @@
 	"bugs": {
 		"url": "https://github.com/PeoScouser98/web_music/issues"
 	},
-	"homepage": "https://github.com/PeoScouser98/web_music#readme",
+	"homepage": "https://github.com/PeoScouser98/music_app_api",
 	"dependencies": {
 		"cookie-parser": "^1.4.6",
 		"cors": "^2.8.5",
