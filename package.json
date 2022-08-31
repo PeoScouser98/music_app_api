@@ -2,8 +2,9 @@
 	"name": "web_music",
 	"version": "1.0.0",
 	"description": "",
+	"main": "index.js",
 	"scripts": {
-		"start": "nodemon ./src/index.js --exec babel-node -e js"
+		"start": "nodemon index.js --exec babel-node -e js"
 	},
 	"repository": {
 		"type": "git",
