@@ -71,4 +71,5 @@ trackSchema.methods = {
 trackSchema.pre("save", function (next) {
 	if (this.checkAudioFileExtension(this.trackSrc)) next();
 });
+
 export default mongoose.model("Tracks", trackSchema);

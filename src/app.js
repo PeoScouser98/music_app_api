@@ -2,7 +2,6 @@ import express from "express";
 import "dotenv/config";
 import mongoose from "mongoose";
 import cors from "cors";
-
 /* ============= Import Routers ============== */
 import trackRouter from "./routes/track";
 import userRouter from "./routes/user";
@@ -31,7 +30,14 @@ app.use("/api", genreRouter);
 
 /* ================ Connect to mongoDB ================== */
 mongoose
-	.connect(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true }, { serverSelectionTimeoutMS: 5000 })
+	.connect(
+		process.env.DATABASE_URL,
+		{
+			useNewUrlParser: true,
+			useUnifiedTopology: true,
+		},
+		{ serverSelectionTimeoutMS: 5000 },
+	)
 	.then((res) => console.log("Connected to database!"))
 	.catch((err) => console.log("Failed to connect to database! ", err));
 
