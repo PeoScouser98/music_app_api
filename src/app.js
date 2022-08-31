@@ -35,4 +35,8 @@ mongoose
 	.then((res) => console.log("Connected to database!"))
 	.catch((err) => console.log("Failed to connect to database! ", err));
 
+/* ======================== Run Server ============================= */
+app.listen(process.env.PORT, () => {
+	console.log(`Connected! Server is listening on: http://localhost:${process.env.PORT}`);
+});
 export default app;
