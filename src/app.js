@@ -21,6 +21,9 @@ app.use(express.json()); // using JSON data type
 /* ========================================================== */
 /* ==================== Using Routers ========================*/
 /* ========================================================== */
+app.use("/", (req, res) => {
+	res.send(`Server is running! PORT: ${process.env.PORT}`);
+});
 app.use("/api", trackRouter);
 app.use("/api", userRouter);
 app.use("/api", artistRouter);
