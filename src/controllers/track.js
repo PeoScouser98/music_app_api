@@ -1,5 +1,6 @@
 import Track from "../models/track";
-
+import fs from "fs";
+import path from "path";
 // lấy ra tất cả bài hát
 export const list = async (req, res) => {
 	try {
@@ -16,7 +17,9 @@ export const list = async (req, res) => {
 export const read = async (req, res) => {
 	try {
 		const track = await Track.findOne({ _id: req.params.id }).exec();
-		res.json(track);
+		res.json({
+			track,
+		});
 	} catch (error) {
 		res.status(404).json({
 			message: "Bài hát không tồn tại",
@@ -50,7 +53,7 @@ export const update = async (req, res) => {
 export const del = (req, res) => {
 	try {
 		const deletedTrack = Track.findOneAndDelete({ _id: req.params.id }).exec();
-		res.json(deletedTrack);
+		res.status(204).json(deletedTrack);
 	} catch (error) {
 		res.status(404).json({
 			message: "Không xóa được bài hát",

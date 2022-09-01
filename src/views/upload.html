@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+	</head>
+	<style>
+		body {
+			font-family: roboto;
+		}
+		form {
+			max-width: 500px;
+			margin: 0 auto;
+		}
+		.form-control {
+			display: flex;
+			flex-direction: column;
+			gap: 10px;
+			margin-bottom: 30px;
+		}
+		.form-control input,
+		.form-control select {
+			padding: 10px 20px;
+			border: 1px solid lightgray;
+		}
+		button {
+			padding: 10px 20px;
+		}
+	</style>
+	<body>
+		<h1 style="text-align: center">Thêm mới bài hát</h1>
+		<form action="" enctype="multipart/form-data" id="upload-track__form">
+			<div class="form-control">
+				<label for=""> Bài hát </label>
+				<input type="text" name="track" id="" />
+			</div>
+			<div class="form-control">
+				<label for=""> Nghệ sĩ </label>
+				<select name="artist" id="artist">
+					<option value="">-- Chọn --</option>
+				</select>
+			</div>
+			<div class="form-control">
+				<label for=""> Thể loại </label>
+				<select name="genre" id="genre">
+					<option value="">-- Chọn --</option>
+				</select>
+			</div>
+			<div class="form-control">
+				<input type="file" name="trackSrc" id="" />
+			</div>
+			<button type="submit">Upload</button>
+		</form>
+		<script>
+			const $ = document.querySelector.bind(document);
+			const $$ = document.querySelectorAll.bind(document);
+			(async () => {
+				const artists = await (await fetch("http://localhost:3001/api/artist")).json();
+				console.log(artists);
+				$("#artist").innerHTML += artists
+					.map((artist) => {
+						return /* html */ `<option value=${artist._id}>${artist.name}</option>`;
+					})
+					.join("");
+
+				const genres = await (await fetch("http://localhost:3001/api/genre")).json();
+				$("#genre").innerHTML += genres
+					.map((genre) => {
+						return /* html */ `<option value=${genre._id}>${genre.name}</option>`;
+					})
+					.join("");
+			})();
+			const form = $("#upload-track__form");
+			form.addEventListener("submit", async (event) => {
+				event.preventDefault();
+
+				const data = new FormData();
+				data.append("trackSrc", form["trackSrc"].files[0]);
+				const uploadResponse = await fetch("http://localhost:3001/api/track-upload", {
+					method: "POST",
+					body: data,
+				});
+				if (uploadResponse.ok || uploadResponse.status == 200) {
+					const trackSrc = await uploadResponse.json();
+					const newTrack = {
+						name: form["track"].value,
+						artist: form["artist"].value,
+						genre: form["genre"].value,
+						trackSrc: trackSrc,
+					};
+					console.log(newTrack);
+					const response = await (
+						await fetch("http://localhost:3001/api/track", {
+							method: "POST",
+							headers: {
+								"Content-Type": "application/json",
+							},
+							body: JSON.stringify(newTrack),
+						})
+					).json();
+					console.log(response);
+				}
+			});
+		</script>
+	</body>
+</html>

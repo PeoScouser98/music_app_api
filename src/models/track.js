@@ -57,7 +57,7 @@ const trackSchema = mongoose.Schema({
 	},
 	uploader: {
 		type: mongoose.Types.ObjectId,
-		require: true,
+
 		ref: "User",
 	},
 });
@@ -68,8 +68,5 @@ trackSchema.methods = {
 		return isValidExt;
 	},
 };
-trackSchema.pre("save", function (next) {
-	if (this.checkAudioFileExtension(this.trackSrc)) next();
-});
 
 export default mongoose.model("Tracks", trackSchema);
