@@ -2,15 +2,19 @@ import fs from "fs";
 import "dotenv/config";
 import { google } from "googleapis";
 import { Stream } from "stream";
+import path from "path";
 
+/* ========================================================== */
+/* ======================DRIVE UPLOAD ======================= */
+/* ========================================================== */
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
 const REDIRECT_URI = process.env.REDIRECT_URI;
 const REFRESH_TOKEN = process.env.REFRESH_TOKEN;
-
 // get auth client
 const oauth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
 oauth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
+
 const drive = google.drive({
 	version: "v3",
 	auth: oauth2Client,
@@ -25,28 +29,47 @@ const setFilePublic = async (fileId) => {
 				type: "anyone",
 			},
 		});
+		return drive.files.get({
+			fileId,
+			fields: "webViewLink,webContentLink",
+		});
 	} catch (error) {
 		console.log(error);
 	}
 };
-
-const uploadFile = async (fileObject) => {
+// folderId: 1lPcnj0jxiOXnKzGb4Ueku12L9i1L46FL
+export const uploadFile = async (file) => {
 	try {
+		/* tạo nơi lưu trữ file tạm thời (buffer) -> file sẽ được upload qua stream */
 		const bufferStream = new Stream.PassThrough();
-		bufferStream.end(fileObject.buffer);
+		bufferStream.end(file.buffer);
+
 		const createdFile = await drive.files.create({
 			requestBody: {
-				name: fileObject.originalname,
+				name: file.originalname,
+				parents: ["1lPcnj0jxiOXnKzGb4Ueku12L9i1L46FL"],
 			},
 			media: {
-				mimeType: fileObject.mimeType,
 				body: bufferStream,
+				/* file được upload lấy từ buffer đã được lưu trữ tạm thời trước đó */
 			},
+			fields: "id",
 		});
-		const getFileUrl = await setFilePublic(createdFile.data.id);
-		return getFileUrl;
+		await setFilePublic(createdFile.data.id);
+		return createdFile;
 	} catch (error) {
 		console.log(error);
 	}
 };
-export default uploadFile;
+export const deleteFile = async (req, res) => {
+	try {
+		const removedFile = await drive.files.delete(req.body.fileId);
+		res.status(204).json(removedFile);
+	} catch (error) {
+		res.status(400).json({
+			message: "Không xóa được file",
+		});
+	}
+};
+/* ============================================================= */
+/* =================== DRIVER UPLOAD END ======================= */
