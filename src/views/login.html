@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+	</head>
+	<style>
+		* {
+			box-sizing: border-box;
+		}
+		body {
+			margin: 0;
+			font-family: roboto;
+		}
+		.container {
+			max-width: 100%;
+			position: relative;
+			min-height: 100vh;
+		}
+		#login__form {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			min-width: 375px;
+			padding: 2rem;
+			border-radius: 0.5rem;
+			box-shadow: 0.5rem 1rem 1rem lightgray;
+		}
+		.form-control {
+			display: flex;
+			flex-direction: column;
+			gap: 10px;
+			margin-bottom: 30px;
+		}
+		.form-control input,
+		.form-control select {
+			display: block;
+			padding: 10px 20px;
+			border: 1px solid lightgray;
+		}
+		button {
+			padding: 10px 20px;
+			background-color: rgb(0, 89, 255);
+			border: none;
+			border-radius: 0.2rem;
+			color: #fff;
+			font-size: 20px;
+		}
+	</style>
+	<body>
+		<div class="container">
+			<form action="" id="login__form">
+				<h1 style="text-align: center; color: darkgray">Sign In</h1>
+				<div class="form-control">
+					<label for="">Email</label>
+					<input type="email" name="email" required />
+				</div>
+				<div class="form-control">
+					<label for="">Password</label>
+					<input type="password" required />
+				</div>
+				<div class="form-control">
+					<button type="submit">Login</button>
+				</div>
+			</form>
+		</div>
+	</body>
+</html>
