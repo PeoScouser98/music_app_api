@@ -1,12 +1,14 @@
 import path from "path";
 /* ========== middleware check audio file ============ */
-export const checkAudioFileExtension = (file, cb) => {
+export const checkAudioFileExtension = (file, callback) => {
 	// allowed file
 	const regex = /wav|mp3|flac/;
 	const isValidExt = regex.test(path.extname(file.originalname).toLowerCase());
-	// const isValidMime = regex.test(file.mimetype);
-	if (isValidExt) return cb(null, true);
+	if (isValidExt) return callback(null, true);
 	else {
-		cb("File không đúng định dạng!");
+		callback("File không đúng định dạng!");
+		return {
+			message: "File không đúng định dạng!",
+		};
 	}
 };
