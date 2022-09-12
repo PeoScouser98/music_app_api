@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 const albumSchema = mongoose.Schema({
-	id: mongoose.Types.ObjectId,
 	name: {
 		type: String,
 		require: true,
@@ -9,14 +8,15 @@ const albumSchema = mongoose.Schema({
 		type: Date,
 		require: true,
 	},
-	artistId: {
+	artist: {
 		type: mongoose.Types.ObjectId,
 		ref: "Artist",
 		require: true,
 	},
-	genreId: {
+	genre: {
 		type: mongoose.Types.ObjectId,
 		ref: "Genre",
 		require: true,
 	},
 });
+export default mongoose.model("Album", albumSchema);

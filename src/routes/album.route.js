@@ -1,5 +1,5 @@
 import express from "express";
-import { create, del, list, read, update } from "../controllers/album";
+import { create, del, list, read, update } from "../controllers/album.controller";
 import { requireSignin } from "../middlewares/checkAuth";
 
 const router = express.Router();
