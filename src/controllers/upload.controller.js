@@ -1,8 +1,6 @@
-import fs from "fs";
 import "dotenv/config";
 import { google } from "googleapis";
 import { Stream } from "stream";
-import path from "path";
 
 /* ========================================================== */
 /* ======================DRIVE UPLOAD ======================= */
@@ -38,7 +36,7 @@ const setFilePublic = async (fileId) => {
 	}
 };
 // folderId: 1lPcnj0jxiOXnKzGb4Ueku12L9i1L46FL
-export const uploadFile = async (file) => {
+export const uploadFile = async (file, dir) => {
 	try {
 		/* tạo nơi lưu trữ file tạm thời (buffer) -> file sẽ được upload qua stream */
 		const bufferStream = new Stream.PassThrough();
@@ -47,7 +45,7 @@ export const uploadFile = async (file) => {
 		const createdFile = await drive.files.create({
 			requestBody: {
 				name: file.originalname,
-				parents: ["1lPcnj0jxiOXnKzGb4Ueku12L9i1L46FL"],
+				parents: [process.env.MUSIC_DIR],
 			},
 			media: {
 				body: bufferStream,

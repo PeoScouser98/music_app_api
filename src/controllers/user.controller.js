@@ -4,6 +4,7 @@ import "dotenv/config";
 import jwt from "jsonwebtoken";
 import { createHmac } from "crypto";
 
+/* :::::::::::::::: Lấy thông tin người dùng :::::::::::::::: */
 export const getUser = async (req, res) => {
 	try {
 		if (req.userId) {
@@ -21,13 +22,14 @@ export const getUser = async (req, res) => {
 	}
 };
 
+/* :::::::::::::::::::: Tạo refresh token :::::::::::::::::::::: */
 export const refreshToken = async (req, res) => {
 	try {
-		const newAccessToken = jwt.sign({ id: req.params.id }, process.env.SECRET_KEY, { expiresIn: "15s" });
+		const newAccessToken = jwt.sign({ id: req.params.id }, process.env.SECRET_KEY, { expiresIn: "30m" });
 		if (newAccessToken)
 			res.status(200).json({
 				accessToken: newAccessToken,
-				expiresIn: Date.now() + 15 * 1000,
+				expiresIn: Date.now() + 30 * 60 * 1000,
 			});
 	} catch (error) {
 		res.status(400).json({
@@ -36,6 +38,7 @@ export const refreshToken = async (req, res) => {
 	}
 };
 
+/* :::::::::::::::::: Sign in ::::::::::::::::::::: */
 export const login = async (req, res) => {
 	try {
 		const account = await User.findOne({ email: req.body.email }).exec();
@@ -67,7 +70,7 @@ export const login = async (req, res) => {
 	}
 };
 
-// đăng ký
+/* :::::::::::::::: Signup ::::::::::::::::: */
 export const register = async (req, res) => {
 	try {
 		const account = await User.findOne({ email: req.body.email }).exec();
@@ -88,15 +91,14 @@ export const register = async (req, res) => {
 					<i>Cảm ơn đã sử dụng dịch vụ của chúng tôi !</i>`,
 			},
 			(error, infor) => {
-				if (error) {
+				if (error)
 					return res.status(400).json({
 						message: error,
 					});
-				} else {
+				else
 					res.status(200).json({
 						message: `Email sent: ${infor.response}`,
 					});
-				}
 			},
 		);
 	} catch (error) {
@@ -107,19 +109,17 @@ export const register = async (req, res) => {
 	}
 };
 
-// quên mật khẩu
+/* :::::::::::::::: Send mail to recover password ::::::::::::::::::: */
 export const recoverPassword = async (req, res) => {
 	try {
 		// lấy email đăng ký
 
-		console.log("email gửi đến::::", req.body.email);
 		const user = await User.findOne({ email: req.body.email }).exec();
 		// check email nếu ko tồn tại => status 404
 		if (!user)
 			return res.status(404).json({
 				message: "Email không tồn tại!",
 			});
-		console.log("password cũ:::::", user.password);
 		/* tạo token*/
 		const NOW = Date.now().toString();
 		const verifyCode = NOW.substr(7, NOW.length - 1);
@@ -128,7 +128,6 @@ export const recoverPassword = async (req, res) => {
 		/* save token vào database */
 		user.token = token;
 		const updatedAccount = await User.findOneAndUpdate({ _id: user.id }, user, { new: true });
-		console.log("Tài khoản mới được cập nhật :::::", updatedAccount);
 
 		/* gửi mã xác thực về mail cho user */
 		await transporter.sendMail(
@@ -153,6 +152,7 @@ export const recoverPassword = async (req, res) => {
 	}
 };
 
+/* ::::::::::::::::::: Reset password :::::::::::::::::::: */
 export const resetPassword = async (req, res) => {
 	try {
 		const user = await User.findOne({ email: req.body.email }).exec();
@@ -179,7 +179,7 @@ export const resetPassword = async (req, res) => {
 	}
 };
 
-// kích hoạt tài khoản
+/* :::::::::::: Activate account :::::::::::::: */
 export const activateAccount = async (req, res) => {
 	try {
 		const decodedToken = jwt.verify(req.body.token, process.env.SECRET_KEY);

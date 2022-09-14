@@ -9,15 +9,19 @@ const trackSchema = mongoose.Schema(
 		artist: {
 			type: String,
 			ref: "Artist",
+			default: "Various Artists",
 		},
 		genre: {
 			type: String,
 			ref: "Genre",
+			default: "Unknown",
 		},
-		album: {
-			type: String,
-			ref: "Album",
-		},
+		album: [
+			{
+				type: String,
+				ref: "Album",
+			},
+		],
 		playlist: [
 			{
 				type: String,

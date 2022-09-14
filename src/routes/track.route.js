@@ -22,7 +22,7 @@ router.patch("/track/:id", requireSignin, update);
 router.delete("/track/:id", requireSignin, del);
 router.post("/track-upload", requireSignin, upload.single("trackSrc"), async (req, res) => {
 	console.log(req.file);
-	const trackSrc = await uploadFile(req.file);
+	const trackSrc = await uploadFile(req.file, process.env.MUSIC_DIR);
 
 	res.json(trackSrc.data);
 });

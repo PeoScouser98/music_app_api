@@ -8,6 +8,7 @@ import userRouter from "./routes/user.route";
 import artistRouter from "./routes/artist.route";
 import genreRouter from "./routes/genre.route";
 import playListRouter from "./routes/playlist.route";
+import { resolveSoa } from "dns";
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.get("/", (req, res) => {
 		res.status(404).send("Server is stopped!");
 	}
 });
+
 app.get("/upload-track", (req, res) => {
 	res.sendFile(path.resolve(__dirname, "./views/upload.html"));
 });

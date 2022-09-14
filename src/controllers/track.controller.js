@@ -32,6 +32,8 @@ export const read = async (req, res) => {
 export const create = async (req, res) => {
 	try {
 		// console.log(req.body);
+		console.log("::::: ID of user :::::", req.auth);
+		req.body.uploader = req.auth;
 		const newTrack = await new Track(req.body).save();
 		console.log(newTrack);
 		res.status(201).json(newTrack);
