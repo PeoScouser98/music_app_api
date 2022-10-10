@@ -1,11 +1,12 @@
 import mongoose from "mongoose";
 const albumSchema = mongoose.Schema({
-	name: {
+	title: {
 		type: String,
 		require: true,
 	},
 	releaseDate: {
 		type: Date,
+		default: new Date().toLocaleDateString(),
 		require: true,
 	},
 	artist: {
@@ -13,10 +14,15 @@ const albumSchema = mongoose.Schema({
 		ref: "Artist",
 		require: true,
 	},
-	genre: {
-		type: mongoose.Types.ObjectId,
-		ref: "Genre",
-		require: true,
+	image: {
+		type: String,
+		default: "",
 	},
+	tracks: [
+		{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Tracks",
+		},
+	],
 });
 export default mongoose.model("Album", albumSchema);
