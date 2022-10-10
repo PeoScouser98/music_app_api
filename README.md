@@ -4,7 +4,7 @@
 
     npm install express
 
-## Cài đặt nodemon (live server), dotenv (biến môi trường), babel (biên dịch ES6/ES7 -> vanila JS)
+## Cài đặt nodemon (live server), dotenv (biến môi trường), babel (biên dịch ES6/ES7 -> vanilla JS)
 
     npm i --save-dev nodemon babel-cli babel-preset-env babel-preset-stage-0 dotenv
 
