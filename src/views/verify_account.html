@@ -2,7 +2,6 @@
 	(async () => {
 		const params = new URLSearchParams(window.location.search);
 		if (params.has("token")) {
-			console.log(params.get("token"));
 			try {
 				const response = await fetch("http://localhost:3001/api/activate-account", {
 					method: "POST",
@@ -15,7 +14,7 @@
 					}),
 				});
 				if (response.ok) {
-					alert("Kích hoạt tài khoản thành công");
+					alert("Activate account successfully!");
 					window.close();
 				}
 			} catch (error) {

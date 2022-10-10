@@ -18,6 +18,7 @@
 	},
 	"homepage": "https://github.com/PeoScouser98/music_app_api",
 	"dependencies": {
+		"compression": "^1.7.4",
 		"cookie-parser": "^1.4.6",
 		"cors": "^2.8.5",
 		"express": "^4.18.1",
