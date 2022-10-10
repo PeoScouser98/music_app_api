@@ -1,11 +1,19 @@
 import Track from "../models/track.model";
 import Comment from "../models/comment.model";
+
 // lấy ra tất cả bài hát
 export const list = async (req, res) => {
 	try {
-		const tracks = await Track.find().populate("artist").exec();
+		const tracks = await Track.find()
+			.populate({ path: "artists", select: "_id name avatar" })
+			.populate({ path: "album", select: "_id title image" })
+			.select("-uploader -createdAt -updatedAt -fileId -genre -__v")
+			.sort({ listen: -1 })
+			.limit(5)
+			.exec();
 		res.status(200).json(tracks);
 	} catch (error) {
+		console.log(error);
 		res.status(404).json({
 			message: "Không có bài hát nào",
 		});
@@ -15,8 +23,12 @@ export const list = async (req, res) => {
 // lấy 1 bài hát
 export const read = async (req, res) => {
 	try {
-		const track = await Track.findOne({ _id: req.params.id }).populate(["artist", "genre"]).exec();
-		const comments = await Comment.find({ _id: track._id }).populate(["track", "user"]).exec();
+		const track = await Track.findOne({ _id: req.params.id })
+			.populate({ path: "artists", select: "_id name avatar" })
+			.populate({ path: "album", select: "_id title image" })
+			.select("-uploader -updatedAt -fileId")
+			.exec();
+		const comments = await Comment.find({ _id: track._id }).populate("user").exec();
 		res.status(200).json({
 			track,
 			comments,
@@ -31,15 +43,11 @@ export const read = async (req, res) => {
 // upload bài hát
 export const create = async (req, res) => {
 	try {
-		// console.log(req.body);
-		console.log("::::: ID of user :::::", req.auth);
 		req.body.uploader = req.auth;
 		const newTrack = await new Track(req.body).save();
-		console.log(newTrack);
-		res.status(201).json(newTrack);
+		return res.status(201).json(newTrack);
 	} catch (error) {
-		console.log(error);
-		res.status(400).json({
+		return res.status(400).json({
 			message: "Không thêm được bài hát",
 		});
 	}
@@ -47,9 +55,13 @@ export const create = async (req, res) => {
 
 export const update = async (req, res) => {
 	try {
-		const updatedTrack = await Track.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true }).exec();
+		const updatedTrack = await Track.findOneAndUpdate({ _id: req.params.id }, req.body, {
+			new: true,
+			upsert: true,
+		}).exec();
 		res.status(200).json(updatedTrack);
 	} catch (error) {
+		console.log(error);
 		res.status(400).json({
 			message: "Không update được bài hát",
 		});
@@ -66,3 +78,5 @@ export const del = (req, res) => {
 		});
 	}
 };
+
+export const listMostListen = (req, res) => {};

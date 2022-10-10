@@ -2,45 +2,34 @@ import mongoose from "mongoose";
 
 const trackSchema = mongoose.Schema(
 	{
-		name: {
+		title: {
 			type: String,
 			require: true,
 		},
-		artist: {
-			type: String,
-			ref: "Artist",
-			default: "Various Artists",
-		},
+		artists: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "Artist",
+			},
+		],
 		genre: {
-			type: String,
+			type: mongoose.Schema.Types.ObjectId,
 			ref: "Genre",
-			default: "Unknown",
 		},
-		album: [
-			{
-				type: String,
-				ref: "Album",
-			},
-		],
-		playlist: [
-			{
-				type: String,
-				ref: "Playlist",
-			},
-		],
+		album: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Album",
+		},
 		fileId: {
 			type: String,
 			require: true,
 		},
+
 		trackSrc: {
 			type: String,
 		},
 		downloadUrl: {
 			type: String,
-		},
-		thumbnail: {
-			type: String,
-			default: "",
 		},
 		listen: {
 			type: Number,
@@ -50,8 +39,13 @@ const trackSchema = mongoose.Schema(
 			type: String,
 			ref: "User",
 		},
+		duration: {
+			type: Number,
+			require: true,
+		},
 	},
 	{
+		strictPopulate: false,
 		timestamps: true,
 	},
 );
