@@ -1,19 +1,30 @@
 import mongoose from "mongoose";
 const playlistSchema = mongoose.Schema(
 	{
-		name: {
+		title: {
 			type: String,
 			require: true,
 			min: 4,
 		},
-		userId: {
-			type: String,
-			ref: "Users",
+		creator: {
+			type: mongoose.Schema.Types.ObjectId,
 			require: true,
+			ref: "Users",
+		},
+		tracks: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "Tracks",
+			},
+		],
+		createAt: {
+			type: Date,
+			default: new Date().toLocaleDateString(),
 		},
 	},
 	{
 		timestamps: true,
+		strictPopulate: false,
 	},
 );
 export default mongoose.model("Playlist", playlistSchema);

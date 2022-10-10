@@ -1,9 +1,10 @@
 import Playlist from "../models/playlist.model";
 import Track from "../models/track.model";
+import User from "../models/user.model";
 export const list = async (req, res) => {
 	try {
-		const playlists = await Playlist.find().exec();
-		res.json(playlists);
+		const playlists = await Playlist.find({ user: req.auth }).exec();
+		return res.status(200).json(playlists);
 	} catch (error) {
 		res.status(404).json({
 			message: "Không có playlist nào",
@@ -12,13 +13,27 @@ export const list = async (req, res) => {
 };
 export const read = async (req, res) => {
 	try {
-		const playlist = await Playlist.find({ _id: req.params.id }).exec();
-		const tracksInPlaylist = await Track.find({ playlist: playlist }).populate("playlist").exec();
-		res.json({
-			playlist: playlist.name,
-			tracks: tracksInPlaylist,
+		const playlist = await Playlist.findOne({ _id: req.params.id, creator: req.auth })
+			.populate({
+				path: "tracks",
+				select: "_id title trackSrc downloadUrl listen",
+				populate: {
+					path: "artists",
+					select: "_id name avatar",
+				},
+				populate: {
+					path: "album",
+					select: "_id title",
+				},
+			})
+			.populate({ path: "creator", select: "username" })
+			.select("-__v -updatedAt -createdAt")
+			.exec();
+		return res.status(200).json({
+			playlist,
 		});
 	} catch (error) {
+		console.log(error);
 		res.status(404).json({
 			message: "Playlist không tồn tại",
 		});
@@ -26,28 +41,39 @@ export const read = async (req, res) => {
 };
 export const create = async (req, res) => {
 	try {
-		const newPlaylist = await new Playlist(req.body).save();
-		res.json(newPlaylist);
+		const newPlaylist = await new Playlist({ creator: req.auth, ...req.body }).save();
+		return res.status(201).json(newPlaylist);
 	} catch (error) {
 		res.status(400).json({
 			message: "Không tạo mới được playlist",
 		});
 	}
 };
+
 export const update = async (req, res) => {
 	try {
+		if (req.body.track) {
+			const updatedPlaylist = await Playlist.findOneAndUpdate(
+				{ _id: req.params.id },
+				{ $push: { tracks: req.body.track } },
+				{ new: true, upsert: true },
+			);
+			return res.status(201).json(updatedPlaylist);
+		}
 		const updatedPlaylist = await Playlist.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true }).exec();
-		res.json(updatedPlaylist);
+		return res.status(201).json(updatedPlaylist);
 	} catch (error) {
+		console.log(error);
 		res.status(400).json({
 			message: "Không update được playlist",
 		});
 	}
 };
+
 export const del = async (req, res) => {
 	try {
 		const deletedPlaylist = await Playlist.findOneAndDelete({ _id: req.params.id }).exec();
-		res.json(deletedPlaylist);
+		return res.status(204).json(deletedPlaylist);
 	} catch (error) {
 		res.status(400).json({
 			message: "Không xóa được playlist",
