@@ -3,20 +3,22 @@ import transporter from "../config/nodemailer.config";
 import "dotenv/config";
 import jwt from "jsonwebtoken";
 import { createHmac } from "crypto";
+import { resolveSoa } from "dns";
 
 /* :::::::::::::::: Lấy thông tin người dùng :::::::::::::::: */
 export const getUser = async (req, res) => {
 	try {
-		if (req.userId) {
-			const user = await User.findOne({ _id: req.userId }).exec();
+		if (req.auth) {
+			const user = await User.findOne({ _id: req.auth }).exec();
 			return res.status(200).json({
+				statusCode: 200,
 				username: user.username,
 				avatar: user.avatar,
 			});
-		} else throw new Error();
+		}
 	} catch (error) {
 		res.status(404).json({
-			status: 404,
+			statusCode: 404,
 			message: "Không tìm thấy user",
 		});
 	}
@@ -25,11 +27,10 @@ export const getUser = async (req, res) => {
 /* :::::::::::::::::::: Tạo refresh token :::::::::::::::::::::: */
 export const refreshToken = async (req, res) => {
 	try {
-		const newAccessToken = jwt.sign({ id: req.params.id }, process.env.SECRET_KEY, { expiresIn: "30m" });
+		const newAccessToken = jwt.sign({ id: req.params.id }, process.env.SECRET_KEY, { expiresIn: "1h" });
 		if (newAccessToken)
 			res.status(200).json({
 				accessToken: newAccessToken,
-				expiresIn: Date.now() + 30 * 60 * 1000,
 			});
 	} catch (error) {
 		res.status(400).json({
@@ -50,7 +51,7 @@ export const login = async (req, res) => {
 			return res.status(401).json({
 				message: "Mật khẩu không đúng",
 			});
-		const token = jwt.sign({ id: account._id }, process.env.SECRET_KEY, { expiresIn: "15s" });
+		const token = jwt.sign({ id: account._id }, process.env.SECRET_KEY, { expiresIn: "30s" });
 		/**
 		 * * sign(data + secretKey) => token
 		 * * verify(token + secretKey) => data
@@ -59,7 +60,6 @@ export const login = async (req, res) => {
 		return res.status(200).json({
 			id: account._id,
 			accessToken: token,
-			expiresIn: Date.now() + 15 * 1000, // gửi về client thời gian hết hạn của access token
 		});
 	} catch (error) {
 		console.log(error);
@@ -121,8 +121,8 @@ export const recoverPassword = async (req, res) => {
 				message: "Email không tồn tại!",
 			});
 		/* tạo token*/
-		const NOW = Date.now().toString();
-		const verifyCode = NOW.substr(7, NOW.length - 1);
+
+		const verifyCode = Date.now().toString().substr(7, 6);
 		const token = jwt.sign({ verifyCode: verifyCode }, process.env.SECRET_KEY, { expiresIn: "5m" });
 
 		/* save token vào database */
@@ -199,5 +199,16 @@ export const activateAccount = async (req, res) => {
 		res.status(403).json({
 			message: "Link xác thực tài khoản không tồn tại hoặc đã hết hạn",
 		});
+	}
+};
+
+export const update = async (req, res) => {
+	try {
+		// req.auth
+		const updatedUser = await User.findOneAndUpdate({ _id: req.auth }, req.body, { new: true });
+		return res.status(201).json(updatedUser);
+	} catch (error) {
+		console.log(error);
+		return res.status(400).json(error);
 	}
 };
