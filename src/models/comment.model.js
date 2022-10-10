@@ -16,6 +16,11 @@ const commentSchema = mongoose.Schema(
 			type: String,
 			require: true,
 		},
+		postAt: {
+			type: Date,
+			default: new Date().toLocaleDateString(),
+			require: true,
+		},
 	},
 	{
 		timestamps: true,
