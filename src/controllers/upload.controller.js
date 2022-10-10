@@ -41,7 +41,7 @@ export const uploadFile = async (file, dir) => {
 		/* tạo nơi lưu trữ file tạm thời (buffer) -> file sẽ được upload qua stream */
 		const bufferStream = new Stream.PassThrough();
 		bufferStream.end(file.buffer);
-
+		// console.log("cai gi day????", bufferStream);
 		const createdFile = await drive.files.create({
 			requestBody: {
 				name: file.originalname,
