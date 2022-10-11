@@ -1,9 +1,9 @@
 import User from "../models/user.model";
-import transporter from "../config/nodemailer.config";
+import transporter from "../services/mailer";
 import "dotenv/config";
 import jwt from "jsonwebtoken";
 import { createHmac } from "crypto";
-import { resolveSoa } from "dns";
+// import { resolveSoa } from "dns";
 
 /* :::::::::::::::: Lấy thông tin người dùng :::::::::::::::: */
 export const getUser = async (req, res) => {

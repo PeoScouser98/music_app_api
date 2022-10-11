@@ -3,7 +3,7 @@ import multer from "multer";
 import { list, read, create, update, del } from "../controllers/track.controller";
 import { isAdmin, checkAccessToken } from "../middlewares/checkAuth.middleware";
 import { checkAudioFileExtension } from "../middlewares/checkFile.middleware";
-import { uploadFile, deleteFile } from "../controllers/upload.controller";
+import { uploadFile, deleteFile } from "../services/drive-upload";
 
 const router = express.Router();
 

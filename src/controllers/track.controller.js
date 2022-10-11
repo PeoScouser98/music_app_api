@@ -9,7 +9,6 @@ export const list = async (req, res) => {
 			.populate({ path: "album", select: "_id title image" })
 			.select("-uploader -createdAt -updatedAt -fileId -genre -__v")
 			.sort({ listen: -1 })
-			.limit(5)
 			.exec();
 		res.status(200).json(tracks);
 	} catch (error) {
