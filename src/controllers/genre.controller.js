@@ -6,8 +6,8 @@ export const list = async (req, res) => {
 		const genres = await Genre.find();
 		res.status(200).json(genres);
 	} catch (error) {
-		res.status(400).json({
-			message: "Không tồn tại bài hát nào!",
+		res.status(500).json({
+			message: "Genres do not exist!",
 		});
 	}
 };
@@ -21,8 +21,8 @@ export const read = async (req, res) => {
 			tracks,
 		});
 	} catch (error) {
-		res.status(400).json({
-			message: "Thể loại bài hát không tồn tại",
+		res.status(500).json({
+			message: "Genre does not exist!",
 		});
 	}
 };
@@ -32,8 +32,8 @@ export const create = async (req, res) => {
 		const newGenre = await new Genre(req.body).save();
 		res.status(201).json(newGenre);
 	} catch (error) {
-		res.status(400).json({
-			message: "Không thêm được thể loại bài hát",
+		res.status(500).json({
+			message: "Error! Cannot create new genre!",
 		});
 	}
 };
@@ -41,10 +41,10 @@ export const create = async (req, res) => {
 export const update = async (req, res) => {
 	try {
 		const updatedGenre = await Genre.findOneAndUpdate({ _id: req.body.id }, req.body, { new: true });
-		res.status(200).json(updatedGenre);
+		res.status(201).json(updatedGenre);
 	} catch (error) {
-		res.status(400).json({
-			message: "Không updated được thể loại bài hát!",
+		res.status(500).json({
+			message: "Error! Cannot update this genre!",
 		});
 	}
 };
@@ -52,10 +52,10 @@ export const update = async (req, res) => {
 export const del = async (req, res) => {
 	try {
 		const deletedGenre = await Genre.findOneAndDelete({ _id: req.body.id }).exec();
-		res.status(200).json(deletedGenre);
+		res.status(204).json(deletedGenre);
 	} catch (error) {
-		res.status(400).json({
-			message: "Không xóa được thể loại bài hát",
+		res.status(500).json({
+			message: "Error! Cannot delete this genre!",
 		});
 	}
 };

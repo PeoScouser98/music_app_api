@@ -18,11 +18,6 @@ const albumSchema = mongoose.Schema({
 		type: String,
 		default: "",
 	},
-	tracks: [
-		{
-			type: mongoose.Schema.Types.ObjectId,
-			ref: "Tracks",
-		},
-	],
+
 });
 export default mongoose.model("Album", albumSchema);

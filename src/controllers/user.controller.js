@@ -1,4 +1,5 @@
 import User from "../models/user.model";
+import Playlist from "../models/playlist.model"
 import transporter from "../services/mailer";
 import "dotenv/config";
 import jwt from "jsonwebtoken";
@@ -33,7 +34,7 @@ export const refreshToken = async (req, res) => {
 				accessToken: newAccessToken,
 			});
 	} catch (error) {
-		res.status(400).json({
+		res.status(500).json({
 			message: "Tạo refresh token không thành công",
 		});
 	}
@@ -63,7 +64,7 @@ export const login = async (req, res) => {
 		});
 	} catch (error) {
 		console.log(error);
-		res.status(400).json({
+		res.status(500).json({
 			message: "Đăng nhập không thành công!",
 			err: error,
 		});
@@ -75,7 +76,7 @@ export const register = async (req, res) => {
 	try {
 		const account = await User.findOne({ email: req.body.email }).exec();
 		if (account)
-			return res.status(400).json({
+			return res.status(500).json({
 				message: "Tài khoản đã tồn tại",
 			});
 		const token = jwt.sign(req.body, process.env.SECRET_KEY, { expiresIn: "5m" });
@@ -92,7 +93,7 @@ export const register = async (req, res) => {
 			},
 			(error, infor) => {
 				if (error)
-					return res.status(400).json({
+					return res.status(500).json({
 						message: error,
 					});
 				else
@@ -112,16 +113,12 @@ export const register = async (req, res) => {
 /* :::::::::::::::: Send mail to recover password ::::::::::::::::::: */
 export const recoverPassword = async (req, res) => {
 	try {
-		// lấy email đăng ký
-
 		const user = await User.findOne({ email: req.body.email }).exec();
-		// check email nếu ko tồn tại => status 404
 		if (!user)
 			return res.status(404).json({
 				message: "Email không tồn tại!",
 			});
-		/* tạo token*/
-
+		/* tạo token */
 		const verifyCode = Date.now().toString().substr(7, 6);
 		const token = jwt.sign({ verifyCode: verifyCode }, process.env.SECRET_KEY, { expiresIn: "5m" });
 
@@ -138,7 +135,7 @@ export const recoverPassword = async (req, res) => {
 				html: /* html */ `<p>Mã xác thực: <b>${verifyCode}</b></p>`,
 			},
 			(err, info) => {
-				if (err) return res.status(400).json(err);
+				if (err) return res.status(500).json(err);
 			},
 		);
 		/* ::::::::::::: finish recover password :::::::::::::::: */
@@ -148,7 +145,7 @@ export const recoverPassword = async (req, res) => {
 		});
 	} catch (error) {
 		console.log(error);
-		return res.status(400).json(error);
+		return res.status(500).json(error);
 	}
 };
 
@@ -171,32 +168,41 @@ export const resetPassword = async (req, res) => {
 			});
 		} else
 			return res.status(401).json({
-				message: "Mã xác thực không đúng",
+				message: "Invalid verification code!",
 			});
 	} catch (error) {
 		console.log(error);
-		return res.status(400).json(error);
+		return res.status(500).json(error);
 	}
 };
 
 /* :::::::::::: Activate account :::::::::::::: */
 export const activateAccount = async (req, res) => {
 	try {
-		const decodedToken = jwt.verify(req.body.token, process.env.SECRET_KEY);
-
+		const decodedToken = jwt.verify(req.body.token, process.env.SECRET_KEY); // -> user data
 		if (!decodedToken) {
-			return res.status(403).json({
-				message: "Link xác thực đã hết hạn hoặc không tồn tại",
+			return res.status(401).json({
+				message: "Access token has been expired!",
 			});
 		}
+		/* Save account to database */
 		const newAccount = await new User(decodedToken).save();
+
+		/* Create default playlist in library */
+		await new Playlist({
+			title: "Liked Tracks",
+			creator: newAccount._id,
+			tracks: []
+		}).save()
+
 		res.status(200).json({
+			id: newAccount._id,
 			email: newAccount.email,
 			username: newAccount.username,
 			role: newAccount.role,
 		});
 	} catch (error) {
-		res.status(403).json({
+		res.status(401).json({
 			message: "Link xác thực tài khoản không tồn tại hoặc đã hết hạn",
 		});
 	}
@@ -204,11 +210,12 @@ export const activateAccount = async (req, res) => {
 
 export const update = async (req, res) => {
 	try {
-		// req.auth
+		console.log(req.body)
 		const updatedUser = await User.findOneAndUpdate({ _id: req.auth }, req.body, { new: true });
+		console.log(updatedUser);
 		return res.status(201).json(updatedUser);
 	} catch (error) {
 		console.log(error);
-		return res.status(400).json(error);
+		return res.status(500).json(error);
 	}
 };

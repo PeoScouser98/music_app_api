@@ -19,5 +19,5 @@ router.post("/register", register);
 router.post("/activate-account", activateAccount);
 router.post("/forgot-password", recoverPassword);
 router.post("/reset-password", resetPassword);
-router.patch("/user/:id", update);
+router.patch("/user", checkAccessToken, update);
 export default router;

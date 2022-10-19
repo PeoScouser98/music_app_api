@@ -7,18 +7,21 @@ export const list = async (req, res) => {
 		return res.status(200).json(data);
 	} catch (error) {
 		return res.status(404).json({
-			message: "Album không tồn tại!",
+			message: "Albums do not exist!",
 		});
 	}
 };
 export const read = async (req, res) => {
 	try {
-		const album = await Album.findOne({ _id: req.params.id }).populate("tracks").exec();
-		return res.status(200).json(album);
+		const album = await Album.findOne({ _id: req.params.id }).populate({ path: "artist", select: "_id name" }).select("title image").exec();
+		const tracks = await Track.find({ album: req.params.id })
+			.populate({ path: "artists album", select: "_id name title avatar image" })
+			.select("-__v -updatedAt -createdAt -fileId -uploader")
+		return res.status(200).json({ album, tracks });
 	} catch (error) {
 		console.log(error.message);
 		return res.status(404).json({
-			message: "Album không tồn tại",
+			message: "Album does not exist!",
 		});
 	}
 };
@@ -30,7 +33,7 @@ export const create = async (req, res) => {
 	} catch (error) {
 		console.log(error);
 		res.status(400).json({
-			message: "Không thêm được album",
+			message: "Error! Cannot create album!",
 		});
 	}
 };
@@ -42,7 +45,7 @@ export const del = async (req, res) => {
 		return res.status(204).json(removedAlbum);
 	} catch (error) {
 		return res.status(400).json({
-			message: "Album không tồn tại",
+			message: "Error! Cannot delete album!",
 		});
 	}
 };
@@ -56,40 +59,7 @@ export const update = async (req, res) => {
 		return res.status(201).json(updatedAlbum);
 	} catch (error) {
 		res.status(400).json({
-			message: "Không update được album",
-		});
-	}
-};
-
-export const addToAlbum = async (req, res) => {
-	try {
-		const trackInAlbum = await Track.findOne({ album: req.params.id });
-		if (trackInAlbum) {
-			return res.status(200).json({
-				message: "Track already existed in album!",
-			});
-		}
-		const album = await Album.findOneAndUpdate(
-			{ _id: req.params.id },
-			{
-				$push: { tracks: req.body.track },
-			},
-			{ new: true, upsert: true },
-		);
-		const track = await Track.findOneAndUpdate(
-			{ _id: req.body.track },
-			{
-				thumbnail: album.image,
-				album: album._id,
-			},
-		);
-		return res.status(201).json({
-			album,
-			track,
-		});
-	} catch (error) {
-		return res.status(400).json({
-			message: "Cannot add to album!",
+			message: "Error! Cannot update album!",
 		});
 	}
 };
@@ -102,7 +72,7 @@ export const removeFromAlbum = async (req, res) => {
 	} catch (error) {
 		console.log(error);
 		res.status(400).json({
-			message: "Không update được bài hát",
+			message: "Error! Cannot remove song from album!",
 		});
 	}
 };

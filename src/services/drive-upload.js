@@ -2,9 +2,7 @@ import "dotenv/config";
 import { google } from "googleapis";
 import { Stream } from "stream";
 
-/* ========================================================== */
-/* ======================DRIVE UPLOAD ======================= */
-/* ========================================================== */
+/* :::::::::::::::::::: DRIVE UPLOAD :::::::::::::::::::: */
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
 const REDIRECT_URI = process.env.REDIRECT_URI;
@@ -41,7 +39,6 @@ export const uploadFile = async (file, dir) => {
 		/* tạo nơi lưu trữ file tạm thời (buffer) -> file sẽ được upload qua stream */
 		const bufferStream = new Stream.PassThrough();
 		bufferStream.end(file.buffer);
-		// console.log("cai gi day????", bufferStream);
 		const createdFile = await drive.files.create({
 			requestBody: {
 				name: file.originalname,
@@ -69,5 +66,4 @@ export const deleteFile = async (req, res) => {
 		});
 	}
 };
-/* ============================================================= */
-/* =================== DRIVER UPLOAD END ======================= */
+

@@ -1,14 +1,14 @@
 import Track from "../models/track.model";
 import Comment from "../models/comment.model";
-
+import deleteFile from "../services/drive-upload"
 // lấy ra tất cả bài hát
 export const list = async (req, res) => {
 	try {
 		const tracks = await Track.find()
-			.populate({ path: "artists", select: "_id name avatar" })
-			.populate({ path: "album", select: "_id title image" })
+			.populate({ path: "artists album", select: "_id title name image avatar" })
 			.select("-uploader -createdAt -updatedAt -fileId -genre -__v")
 			.sort({ listen: -1 })
+			.limit(+req.query.limit)
 			.exec();
 		res.status(200).json(tracks);
 	} catch (error) {
@@ -46,7 +46,7 @@ export const create = async (req, res) => {
 		const newTrack = await new Track(req.body).save();
 		return res.status(201).json(newTrack);
 	} catch (error) {
-		return res.status(400).json({
+		return res.status(500).json({
 			message: "Không thêm được bài hát",
 		});
 	}
@@ -61,21 +61,23 @@ export const update = async (req, res) => {
 		res.status(200).json(updatedTrack);
 	} catch (error) {
 		console.log(error);
-		res.status(400).json({
+		res.status(500).json({
 			message: "Không update được bài hát",
 		});
 	}
 };
 
-export const del = (req, res) => {
+export const del = async (req, res) => {
 	try {
-		const deletedTrack = Track.findOneAndDelete({ _id: req.params.id }).exec();
+		const { fileId } = await Track.findOne({ _id: req.params.id }).exec()
+		await deleteFile(fileId)
+		const deletedTrack = await Track.findOneAndDelete({ _id: req.params.id }).exec();
 		res.status(204).json(deletedTrack);
 	} catch (error) {
-		res.status(404).json({
+		res.status(500).json({
 			message: "Không xóa được bài hát",
 		});
 	}
 };
 
-export const listMostListen = (req, res) => {};
+export const listMostListen = (req, res) => { };

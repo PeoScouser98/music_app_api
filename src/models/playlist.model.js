@@ -17,6 +17,10 @@ const playlistSchema = mongoose.Schema(
 				ref: "Tracks",
 			},
 		],
+		image: {
+			type: String,
+			default: "../../assets/img/default-thumbnail.png"
+		},
 		createAt: {
 			type: Date,
 			default: new Date().toLocaleDateString(),

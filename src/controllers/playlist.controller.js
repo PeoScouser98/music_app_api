@@ -13,20 +13,16 @@ export const list = async (req, res) => {
 };
 export const read = async (req, res) => {
 	try {
-		const playlist = await Playlist.findOne({ _id: req.params.id, creator: req.auth })
+		const playlist = await Playlist.findOne({ _id: req.params.id, creator: req.auth, })
 			.populate({
 				path: "tracks",
-				select: "_id title trackSrc downloadUrl listen",
+				select: "_id title trackSrc downloadUrl duration listen artists album",
 				populate: {
-					path: "artists",
-					select: "_id name avatar",
-				},
-				populate: {
-					path: "album",
-					select: "_id title",
+					path: "album artists",
+					select: "title name image avatar"
 				},
 			})
-			.populate({ path: "creator", select: "username" })
+			.populate({ path: "creator", select: "username avatar" })
 			.select("-__v -updatedAt -createdAt")
 			.exec();
 		return res.status(200).json({
@@ -44,7 +40,7 @@ export const create = async (req, res) => {
 		const newPlaylist = await new Playlist({ creator: req.auth, ...req.body }).save();
 		return res.status(201).json(newPlaylist);
 	} catch (error) {
-		res.status(400).json({
+		res.status(500).json({
 			message: "Không tạo mới được playlist",
 		});
 	}
@@ -64,7 +60,7 @@ export const update = async (req, res) => {
 		return res.status(201).json(updatedPlaylist);
 	} catch (error) {
 		console.log(error);
-		res.status(400).json({
+		res.status(500).json({
 			message: "Không update được playlist",
 		});
 	}
@@ -75,7 +71,7 @@ export const del = async (req, res) => {
 		const deletedPlaylist = await Playlist.findOneAndDelete({ _id: req.params.id }).exec();
 		return res.status(204).json(deletedPlaylist);
 	} catch (error) {
-		res.status(400).json({
+		res.status(500).json({
 			message: "Không xóa được playlist",
 		});
 	}

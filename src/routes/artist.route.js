@@ -8,7 +8,7 @@ router.get("/artist/:id", read);
 router.post("/artist", checkAccessToken, isAdmin, create);
 router.patch("/artist/:id", checkAccessToken, isAdmin, update);
 router.delete("/artist/:id", checkAccessToken, isAdmin, del);
-router.get("/artist/album/:id", albumByArtist);
-router.get("/artist/track/:id", trackByArtist);
+
+
 
 export default router;

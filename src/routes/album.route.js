@@ -1,5 +1,5 @@
 import express from "express";
-import { create, del, list, read, update, removeFromAlbum, addToAlbum } from "../controllers/album.controller";
+import { create, del, list, read, update, removeFromAlbum } from "../controllers/album.controller";
 import { checkAccessToken, isAdmin } from "../middlewares/checkAuth.middleware";
 
 const router = express.Router();
@@ -9,7 +9,7 @@ router.get("/album/:id", read);
 router.post("/album", checkAccessToken, isAdmin, create);
 router.patch("/album/:id", checkAccessToken, isAdmin, update);
 router.delete("/album/:id", checkAccessToken, isAdmin, del);
-router.patch("/album/add/:id", checkAccessToken, isAdmin, addToAlbum);
 router.patch("/album/remove/:id", checkAccessToken, isAdmin, removeFromAlbum);
+// router.patch("/album/add/:id", checkAccessToken, isAdmin, addToAlbum);
 
 export default router;
