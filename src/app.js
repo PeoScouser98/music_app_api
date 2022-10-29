@@ -10,13 +10,14 @@ import artistRouter from "./routes/artist.route";
 import genreRouter from "./routes/genre.route";
 import playListRouter from "./routes/playlist.route";
 import albumRouter from "./routes/album.route";
+import collectionRouter from "./routes/collection.route"
 
 const app = express();
 
 /* :::::::::::::::::: Using Middlewares :::::::::::::::::: */
 app.use(cors()); // public API
 app.use(express.json()); // using JSON data type
-app.use(compression({ level: 9 })); // compress data if payload is too large
+app.use(compression({ level: 6 })); // compress data if payload is too large
 
 /* :::::::::::::::::: Using Routers :::::::::::::::::::: */
 app.get("/", (req, res) => {
@@ -36,5 +37,6 @@ app.use("/api", artistRouter);
 app.use("/api", genreRouter);
 app.use("/api", playListRouter);
 app.use("/api", albumRouter);
+app.use("/api", collectionRouter);
 
 export default app;
