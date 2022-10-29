@@ -4,8 +4,31 @@ import transporter from "../services/mailer";
 import "dotenv/config";
 import jwt from "jsonwebtoken";
 import { createHmac } from "crypto";
-// import { resolveSoa } from "dns";
 
+/* ::::::::: Get all users ::::::::::::::: */
+export const list = async (req, res) => {
+	try {
+		const users = await User.find().exec()
+		return res.status(200).json(users)
+	} catch (error) {
+		return res.status(404).json({
+			statusCode: 404,
+			message: "Cannot find user!",
+		});
+	}
+};
+/* ::::::::: Get all users ::::::::::::::: */
+export const read = async (req, res) => {
+	try {
+		const user = await User.findOne({ _id: req.params.id }).exec()
+		return res.status(200).json(user)
+	} catch (error) {
+		return res.status(404).json({
+			statusCode: 404,
+			message: "Cannot find user!",
+		});
+	}
+};
 /* :::::::::::::::: Lấy thông tin người dùng :::::::::::::::: */
 export const getUser = async (req, res) => {
 	try {
@@ -17,10 +40,13 @@ export const getUser = async (req, res) => {
 				avatar: user.avatar,
 			});
 		}
+		else return res.status(404).json({
+			message: "Cannot find user!"
+		})
 	} catch (error) {
-		res.status(404).json({
+		return res.status(404).json({
 			statusCode: 404,
-			message: "Không tìm thấy user",
+			message: "Cannot find user!",
 		});
 	}
 };
@@ -30,12 +56,12 @@ export const refreshToken = async (req, res) => {
 	try {
 		const newAccessToken = jwt.sign({ id: req.params.id }, process.env.SECRET_KEY, { expiresIn: "1h" });
 		if (newAccessToken)
-			res.status(200).json({
+			return res.status(200).json({
 				accessToken: newAccessToken,
 			});
 	} catch (error) {
-		res.status(500).json({
-			message: "Tạo refresh token không thành công",
+		return res.status(500).json({
+			message: "Cannot create new access token!",
 		});
 	}
 };
@@ -46,38 +72,39 @@ export const login = async (req, res) => {
 		const account = await User.findOne({ email: req.body.email }).exec();
 		if (!account)
 			return res.status(404).json({
-				message: "Tài khoản không tồn tại",
+				message: "Account does not exist",
 			});
 		if (!account.authenticate(req.body.password))
 			return res.status(401).json({
-				message: "Mật khẩu không đúng",
+				message: "Incorrect password!",
 			});
 		const token = jwt.sign({ id: account._id }, process.env.SECRET_KEY, { expiresIn: "30s" });
 		/**
-		 * * sign(data + secretKey) => token
-		 * * verify(token + secretKey) => data
+		 * * sign(payload + secretKey) => token
+		 * * verify(token + secretKey) => payload
 		 *  */
 
 		return res.status(200).json({
 			id: account._id,
+			username: account.username,
 			accessToken: token,
 		});
 	} catch (error) {
 		console.log(error);
-		res.status(500).json({
-			message: "Đăng nhập không thành công!",
+		return res.status(500).json({
+			message: "Failed to sign in!",
 			err: error,
 		});
 	}
 };
 
-/* :::::::::::::::: Signup ::::::::::::::::: */
+/* :::::::::::::::: Sign up ::::::::::::::::: */
 export const register = async (req, res) => {
 	try {
 		const account = await User.findOne({ email: req.body.email }).exec();
 		if (account)
 			return res.status(500).json({
-				message: "Tài khoản đã tồn tại",
+				message: "Account already existed!",
 			});
 		const token = jwt.sign(req.body, process.env.SECRET_KEY, { expiresIn: "5m" });
 
@@ -85,11 +112,11 @@ export const register = async (req, res) => {
 			{
 				from: process.env.AUTH_EMAIL,
 				to: req.body.email,
-				subject: "Xác thực tài khoản",
+				subject: "Activate your account",
 				html: /*html */ `
-					<h3>Sử dụng link này để kích hoạt tài khoản</h3>
-					<p><a href=${process.env.ACTIVATION_URL}?token=${token}>Link kích hoạt</a></p>
-					<i>Cảm ơn đã sử dụng dịch vụ của chúng tôi !</i>`,
+					<h3>On clicking this link, you are goin' to activate account!</h3>
+					<p><a href=${process.env.ACTIVATION_URL}?token=${token}>Active Link</a></p>
+					<i>Thanks for register to be one of our member!</i>`,
 			},
 			(error, infor) => {
 				if (error)
@@ -97,14 +124,14 @@ export const register = async (req, res) => {
 						message: error,
 					});
 				else
-					res.status(200).json({
+					return res.status(202).json({
 						message: `Email sent: ${infor.response}`,
 					});
 			},
 		);
 	} catch (error) {
-		res.status(403).json({
-			message: "Đăng ký không thành công",
+		return res.status(500).json({
+			message: "Faild to register",
 			error: error,
 		});
 	}
@@ -124,7 +151,7 @@ export const recoverPassword = async (req, res) => {
 
 		/* save token vào database */
 		user.token = token;
-		const updatedAccount = await User.findOneAndUpdate({ _id: user.id }, user, { new: true });
+		await User.findOneAndUpdate({ _id: user.id }, user, { new: true });
 
 		/* gửi mã xác thực về mail cho user */
 		await transporter.sendMail(
@@ -139,7 +166,7 @@ export const recoverPassword = async (req, res) => {
 			},
 		);
 		/* ::::::::::::: finish recover password :::::::::::::::: */
-		return res.status(200).json({
+		return res.status(201).json({
 			verifyCode,
 			token,
 		});
@@ -163,7 +190,7 @@ export const resetPassword = async (req, res) => {
 			/* Update mật khẩu mới và xóa token lưu trong database */
 			await User.findOneAndUpdate({ email: req.body.email }, { password: newPassword, token: "" }, { new: true });
 
-			res.status(200).json({
+			return res.status(201).json({
 				message: "Reset password successfully!",
 			});
 		} else
@@ -195,15 +222,15 @@ export const activateAccount = async (req, res) => {
 			tracks: []
 		}).save()
 
-		res.status(200).json({
+		return res.status(201).json({
 			id: newAccount._id,
 			email: newAccount.email,
 			username: newAccount.username,
 			role: newAccount.role,
 		});
 	} catch (error) {
-		res.status(401).json({
-			message: "Link xác thực tài khoản không tồn tại hoặc đã hết hạn",
+		return res.status(401).json({
+			message: "jwt has expired!",
 		});
 	}
 };
