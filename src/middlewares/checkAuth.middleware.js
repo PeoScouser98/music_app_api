@@ -5,11 +5,14 @@ import "dotenv/config";
 export const checkAccessToken = async (req, res, next) => {
 	try {
 		const accessToken = req.body.token || req.params.token || req.headers.token || req.query.token;
-		const { id } = jwt.verify(accessToken, process.env.SECRET_KEY);
-		const { role } = await User.findOne({ _id: id }).select("role");
-		req.role = role;
-		req.auth = id;
+		if (accessToken) {
+			const { id } = jwt.verify(accessToken, process.env.SECRET_KEY);
+			const { role } = await User.findOne({ _id: id }).select("role");
+			req.role = role;
+			req.auth = id;
+		}
 		next();
+
 	} catch (error) {
 		if (error.name === "TokenExpiredError")
 			return res.status(200).json({
