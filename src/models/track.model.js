@@ -36,13 +36,19 @@ const trackSchema = mongoose.Schema(
 			default: 0,
 		},
 		uploader: {
-			type: String,
+			type: mongoose.Schema.Types.ObjectId,
 			ref: "User",
 		},
 		duration: {
 			type: Number,
 			require: true,
 		},
+		followers: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "User"
+			}
+		]
 	},
 	{
 		strictPopulate: false,

@@ -10,7 +10,7 @@ export const list = async (req, res) => {
 			.sort({ listen: -1 })
 			.limit(+req.query.limit)
 			.exec();
-		res.status(200).json(tracks);
+		return res.status(200).json(tracks);
 	} catch (error) {
 		console.log(error);
 		res.status(404).json({
@@ -18,6 +18,23 @@ export const list = async (req, res) => {
 		});
 	}
 };
+
+// 
+export const listByUploader = async (req, res) => {
+	try {
+		console.log(req.auth)
+		const tracks = await Track.find({ uploader: req.auth })
+			.populate({ path: "artists album", select: "_id title name image avatar" })
+			.select("-uploader -createdAt -updatedAt -fileId -genre -__v")
+			.limit(+req.query.limit)
+			.sort({ createdAt: -1 }).exec()
+		return res.status(200).json(tracks)
+	} catch (error) {
+		return res.status(404).json({
+			message: "Cannot find tracks that uploaded by user"
+		})
+	}
+}
 
 // lấy 1 bài hát
 export const read = async (req, res) => {
@@ -28,7 +45,7 @@ export const read = async (req, res) => {
 			.select("-uploader -updatedAt -fileId")
 			.exec();
 		const comments = await Comment.find({ _id: track._id }).populate("user").exec();
-		res.status(200).json({
+		return res.status(200).json({
 			track,
 			comments,
 		});
@@ -58,10 +75,10 @@ export const update = async (req, res) => {
 			new: true,
 			upsert: true,
 		}).exec();
-		res.status(200).json(updatedTrack);
+		return res.status(200).json(updatedTrack);
 	} catch (error) {
 		console.log(error);
-		res.status(500).json({
+		return res.status(500).json({
 			message: "Không update được bài hát",
 		});
 	}
@@ -72,9 +89,9 @@ export const del = async (req, res) => {
 		const { fileId } = await Track.findOne({ _id: req.params.id }).exec()
 		await deleteFile(fileId)
 		const deletedTrack = await Track.findOneAndDelete({ _id: req.params.id }).exec();
-		res.status(204).json(deletedTrack);
+		return res.status(204).json(deletedTrack);
 	} catch (error) {
-		res.status(500).json({
+		return res.status(500).json({
 			message: "Không xóa được bài hát",
 		});
 	}
