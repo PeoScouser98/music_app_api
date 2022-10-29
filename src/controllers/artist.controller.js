@@ -43,11 +43,18 @@ export const create = async (req, res) => {
 
 export const update = async (req, res) => {
 	try {
-		const updatedArtist = await Artist.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true }).exec();
+		let updatedArtist
+		if (req.body.follower) {
+			updatedArtist = await Artist.findByIdAndUpdate({ _id: req.params.id }, { $push: { followers: req.body.follower } }, { new: true, upsert: true }).exec();
+			if (req.query.action == "unfollow")
+				updatedArtist = await Artist.findByIdAndUpdate({ _id: req.params.id }, { $pull: { followers: req.body.follower } }, { new: true, upsert: true }).exec();
+		}
+		updatedArtist = await Artist.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true }).exec();
 		return res.status(201).json(updatedArtist);
 	} catch (error) {
 		res.status(500).json({
 			message: "Error! Cannot update artist!",
+			error: error.message
 		});
 	}
 };
