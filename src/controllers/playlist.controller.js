@@ -3,8 +3,14 @@ import Track from "../models/track.model";
 import User from "../models/user.model";
 export const list = async (req, res) => {
 	try {
-		const playlists = await Playlist.find({ user: req.auth }).exec();
-		return res.status(200).json(playlists);
+		if (req.auth) {
+			const playlists = await Playlist.find({ user: req.auth }).exec();
+			return res.status(200).json(playlists);
+		}
+		else return res.status(200).json({
+			statusCode: 401,
+			message: "Require signin!"
+		})
 	} catch (error) {
 		res.status(404).json({
 			message: "Không có playlist nào",
@@ -13,7 +19,7 @@ export const list = async (req, res) => {
 };
 export const read = async (req, res) => {
 	try {
-		const playlist = await Playlist.findOne({ _id: req.params.id, creator: req.auth, })
+		const playlist = await Playlist.findOne({ _id: req.params.id, creator: req.auth })
 			.populate({
 				path: "tracks",
 				select: "_id title trackSrc downloadUrl duration listen artists album",
@@ -22,12 +28,10 @@ export const read = async (req, res) => {
 					select: "title name image avatar"
 				},
 			})
-			.populate({ path: "creator", select: "username avatar" })
+			.populate({ path: "creator", select: "username avatar role" })
 			.select("-__v -updatedAt -createdAt")
 			.exec();
-		return res.status(200).json({
-			playlist,
-		});
+		return res.status(200).json(playlist);
 	} catch (error) {
 		console.log(error);
 		res.status(404).json({
@@ -48,6 +52,15 @@ export const create = async (req, res) => {
 
 export const update = async (req, res) => {
 	try {
+		if (req.body.track && req.query.action == "remove") {
+			console.log(req.body.track);
+			const updatedPlaylist = await Playlist.findOneAndUpdate(
+				{ _id: req.params.id },
+				{ $pull: { tracks: req.body.track } },
+				{ new: true },
+			);
+			return res.status(201).json(updatedPlaylist);
+		}
 		if (req.body.track) {
 			const updatedPlaylist = await Playlist.findOneAndUpdate(
 				{ _id: req.params.id },
@@ -56,6 +69,7 @@ export const update = async (req, res) => {
 			);
 			return res.status(201).json(updatedPlaylist);
 		}
+
 		const updatedPlaylist = await Playlist.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true }).exec();
 		return res.status(201).json(updatedPlaylist);
 	} catch (error) {
