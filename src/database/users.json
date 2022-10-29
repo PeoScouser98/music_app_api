@@ -1,0 +1,23 @@
+[{
+  "_id": {
+    "$oid": "632842571fbc3251071a8818"
+  },
+  "email": "quanghiep03198@gmail.com",
+  "password": "6c49759ba5fc353504ba89715f26a0adc6383ac2c80bd5474dced6a47cebb38b",
+  "username": "Bass Station",
+  "address": "60/66/ Nguyen Hoang/ Mai Dich",
+  "avatar": "node_modules/bootstrap-icons/icons/person-circle.svg",
+  "phone": "0336089988",
+  "role": 1,
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1663582807602"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1666591272655"
+    }
+  },
+  "__v": 0
+}]

@@ -1,0 +1,172 @@
+[{
+  "_id": {
+    "$oid": "632fbe9fd5cc493189f74ea0"
+  },
+  "title": "True",
+  "releaseDate": {
+    "$date": {
+      "$numberLong": "1664038800000"
+    }
+  },
+  "artist": {
+    "$oid": "631c9f28181ddf8fa405fb23"
+  },
+  "image": "https://th.bing.com/th/id/R.124c6a5322f9c9a013b9298e43d42f80?rik=tn0EaGKe72gAsw&riu=http%3a%2f%2fwww.yourmusicradar.com%2fwp-content%2fuploads%2f2013%2f09%2favicii-true-album.jpg&ehk=QchK0Rb8gB9iyLOA50X6MBvJbKKNhcMy0eua%2bw2Ufm4%3d&risl=&pid=ImgRaw&r=0",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "632fbefcd5cc493189f74ea3"
+  },
+  "title": "The Days/Nights",
+  "releaseDate": {
+    "$date": {
+      "$numberLong": "1664038800000"
+    }
+  },
+  "artist": {
+    "$oid": "631c9f28181ddf8fa405fb23"
+  },
+  "image": "https://th.bing.com/th/id/R.2ce639df3df213db90210e9bd23fa47f?rik=TGlIZkkfedSknQ&riu=http%3a%2f%2fwww.azikmut.fr%2fwp-content%2fuploads%2fAVICII-EP-THE-DAYS-THE-NIGHTS-COVER.png&ehk=OIaQuMF1tiNjB2mS%2b0FhGKsYxOkjSgbaxBsxZefFZtk%3d&risl=&pid=ImgRaw&r=0",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "632fbf4ad5cc493189f74ea6"
+  },
+  "title": "Stories",
+  "releaseDate": {
+    "$date": {
+      "$numberLong": "1664038800000"
+    }
+  },
+  "artist": {
+    "$oid": "631c9f28181ddf8fa405fb23"
+  },
+  "image": "https://mir-s3-cdn-cf.behance.net/project_modules/disp/e705a534040642.56c2206da74cf.jpg",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "632fc011d5cc493189f74eaa"
+  },
+  "title": "Bangarang EP",
+  "releaseDate": {
+    "$date": {
+      "$numberLong": "1664038800000"
+    }
+  },
+  "artist": {
+    "$oid": "631cc466d3142256c35f82d3"
+  },
+  "image": "https://th.bing.com/th/id/OIP.aiEjrGOgQ8DfpqAFC19DpAHaHa?pid=ImgDet&rs=1",
+  "tracks": [],
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "632fc237d5cc493189f74ebc"
+  },
+  "title": "Recess",
+  "releaseDate": {
+    "$date": {
+      "$numberLong": "1664038800000"
+    }
+  },
+  "artist": {
+    "$oid": "631cc466d3142256c35f82d3"
+  },
+  "image": "https://th.bing.com/th/id/R.cc3e911508219fe9e65a2cbff5fb3272?rik=YOsTctyBRs39bg&riu=http%3a%2f%2flouderthanwar.com%2fwp-content%2fuploads%2fskrillex-recess-album-artwork.jpg&ehk=%2fm9kMPGNnALOdrHSwutj3JH1gvxEIMc2n7sDKqYSJZE%3d&risl=&pid=ImgRaw&r=0",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "632fc2f97dcae0c0882a887c"
+  },
+  "title": "Rage Valley",
+  "releaseDate": {
+    "$date": {
+      "$numberLong": "1664038800000"
+    }
+  },
+  "artist": {
+    "$oid": "632fc1f5d5cc493189f74eb9"
+  },
+  "image": "https://img.discogs.com/eylspYnUWicqKNAKwjB7ajymne0=/fit-in/600x600/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-6292878-1458111362-1645.jpeg.jpg",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6333cd0e01e5124cabdf751c"
+  },
+  "title": "Motion",
+  "releaseDate": {
+    "$date": {
+      "$numberLong": "1664298000000"
+    }
+  },
+  "artist": {
+    "$oid": "632d702d3b1497cd197720e6"
+  },
+  "image": "https://cdn.i-scmp.com/sites/default/files/styles/square/public/d8/yp/images/calvinharrismusicrev.artg65fhhus.1ypcalvin-harris-motion.jpg?itok=AOIWZKmB",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "633423088215774160875590"
+  },
+  "title": "18 Months",
+  "releaseDate": {
+    "$date": {
+      "$numberLong": "1664298000000"
+    }
+  },
+  "artist": {
+    "$oid": "632d702d3b1497cd197720e6"
+  },
+  "image": "https://upload.wikimedia.org/wikipedia/en/d/df/Calvin_Harris_-_18_Months.png",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "63445dfa7673435ed215398b"
+  },
+  "title": "Evolve",
+  "releaseDate": {
+    "$date": {
+      "$numberLong": "1665421200000"
+    }
+  },
+  "artist": {
+    "$oid": "632d700b3b1497cd197720e3"
+  },
+  "image": "https://i1.sndcdn.com/artworks-000232163100-jlk1i1-t500x500.jpg",
+  "tracks": [
+    {
+      "$oid": "6341ac5a5c59c9d855434f6d"
+    }
+  ],
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "63459e5e2abde517cc9f6aac"
+  },
+  "title": "Origins (Deluxe)",
+  "releaseDate": {
+    "$date": {
+      "$numberLong": "1665421200000"
+    }
+  },
+  "artist": {
+    "$oid": "632d700b3b1497cd197720e3"
+  },
+  "image": "https://i.scdn.co/image/ab67616d0000b273da6f73a25f4c79d0e6b4a8bd",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "634f7610d3a0b8348059cc44"
+  },
+  "title": "Night Visions",
+  "releaseDate": {
+    "$date": {
+      "$numberLong": "1666112400000"
+    }
+  },
+  "artist": {
+    "$oid": "632d700b3b1497cd197720e3"
+  },
+  "image": "https://global-uploads.webflow.com/5ed6b9103350a33ba6eb1be2/5fdb99555c6370c971478c1a_71SrRo5Mg6L._SL1057_.jpg",
+  "__v": 0
+}]

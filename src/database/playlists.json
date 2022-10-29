@@ -1,0 +1,127 @@
+[{
+  "_id": {
+    "$oid": "632855fbae34bb34d48807f7"
+  },
+  "title": "Progressive House",
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1663587835660"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1665850706302"
+    }
+  },
+  "__v": 0,
+  "tracks": [
+    {
+      "$oid": "6320a87bc89cdd1b04731ce7"
+    },
+    {
+      "$oid": "6337057d0ce31e0d7ce39932"
+    },
+    {
+      "$oid": "6337057d0ce31e0d7ce39932"
+    },
+    {
+      "$oid": "63307d5af871851debc186da"
+    }
+  ],
+  "creator": {
+    "$oid": "632842571fbc3251071a8818"
+  }
+},{
+  "_id": {
+    "$oid": "63289f99ba571172412752e5"
+  },
+  "title": "Dubstep",
+  "tracks": [
+    {
+      "$oid": "634404ac1a3e8147d768251b"
+    },
+    {
+      "$oid": "63303821448a50b9193be2d3"
+    }
+  ],
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1663606681376"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1665853022742"
+    }
+  },
+  "__v": 0,
+  "creator": {
+    "$oid": "632842571fbc3251071a8818"
+  }
+},{
+  "_id": {
+    "$oid": "6328a930acc6515808b67efe"
+  },
+  "title": "Bass",
+  "creator": {
+    "$oid": "632842571fbc3251071a8818"
+  },
+  "tracks": [
+    {
+      "$oid": "6337057d0ce31e0d7ce39932"
+    },
+    {
+      "$oid": "6341ac345c59c9d855434f65"
+    },
+    {
+      "$oid": "6341ac5a5c59c9d855434f6d"
+    },
+    {
+      "$oid": "6341ae175c59c9d855434f8d"
+    },
+    {
+      "$oid": "6341a6045c59c9d855434ef5"
+    }
+  ],
+  "createAt": {
+    "$date": {
+      "$numberLong": "1663608514912"
+    }
+  },
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1663609136597"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1665759785012"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6328a967acc6515808b67f0b"
+  },
+  "title": "Acoustic",
+  "creator": {
+    "$oid": "632842571fbc3251071a8818"
+  },
+  "tracks": [],
+  "createAt": {
+    "$date": {
+      "$numberLong": "1663608514912"
+    }
+  },
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1663609191922"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1663609191922"
+    }
+  },
+  "__v": 0
+}]

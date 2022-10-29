@@ -1,0 +1,19 @@
+[{
+  "_id": {
+    "$oid": "6310d05b94253b7540e8225d"
+  },
+  "name": "Pop",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6311d326005d60aaa704ff62"
+  },
+  "name": "Balad",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "631c9f9b181ddf8fa405fb29"
+  },
+  "name": "Dance/Electronic",
+  "__v": 0
+}]
