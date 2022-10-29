@@ -18,6 +18,12 @@ const albumSchema = mongoose.Schema({
 		type: String,
 		default: "",
 	},
+	followers: [
+		{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "User"
+		}
+	]
 
 });
 export default mongoose.model("Album", albumSchema);
