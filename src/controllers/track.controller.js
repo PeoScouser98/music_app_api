@@ -1,6 +1,6 @@
 import Track from "../models/track.model";
 import Comment from "../models/comment.model";
-import deleteFile from "../services/drive-upload"
+import deleteFile from "../services/drive-upload";
 // lấy ra tất cả bài hát
 export const list = async (req, res) => {
 	try {
@@ -19,22 +19,23 @@ export const list = async (req, res) => {
 	}
 };
 
-// 
+//
 export const listByUploader = async (req, res) => {
 	try {
-		console.log(req.auth)
+		console.log(req.auth);
 		const tracks = await Track.find({ uploader: req.auth })
 			.populate({ path: "artists album", select: "_id title name image avatar" })
 			.select("-uploader -createdAt -updatedAt -fileId -genre -__v")
 			.limit(+req.query.limit)
-			.sort({ createdAt: -1 }).exec()
-		return res.status(200).json(tracks)
+			.sort({ createdAt: -1 })
+			.exec();
+		return res.status(200).json(tracks);
 	} catch (error) {
 		return res.status(404).json({
-			message: "Cannot find tracks that uploaded by user"
-		})
+			message: "Cannot find tracks that uploaded by user",
+		});
 	}
-}
+};
 
 // lấy 1 bài hát
 export const read = async (req, res) => {
@@ -86,8 +87,8 @@ export const update = async (req, res) => {
 
 export const del = async (req, res) => {
 	try {
-		const { fileId } = await Track.findOne({ _id: req.params.id }).exec()
-		await deleteFile(fileId)
+		const { fileId } = await Track.findOne({ _id: req.params.id }).exec();
+		await deleteFile(fileId);
 		const deletedTrack = await Track.findOneAndDelete({ _id: req.params.id }).exec();
 		return res.status(204).json(deletedTrack);
 	} catch (error) {
@@ -96,5 +97,3 @@ export const del = async (req, res) => {
 		});
 	}
 };
-
-export const listMostListen = (req, res) => { };

@@ -43,12 +43,6 @@ const trackSchema = mongoose.Schema(
 			type: Number,
 			require: true,
 		},
-		followers: [
-			{
-				type: mongoose.Schema.Types.ObjectId,
-				ref: "User"
-			}
-		]
 	},
 	{
 		strictPopulate: false,

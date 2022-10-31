@@ -1,15 +1,16 @@
 import User from "../models/user.model";
-import Playlist from "../models/playlist.model"
+import Playlist from "../models/playlist.model";
 import transporter from "../services/mailer";
 import "dotenv/config";
 import jwt from "jsonwebtoken";
 import { createHmac } from "crypto";
+import Collection from "../models/collection.model";
 
 /* ::::::::: Get all users ::::::::::::::: */
 export const list = async (req, res) => {
 	try {
-		const users = await User.find().exec()
-		return res.status(200).json(users)
+		const users = await User.find().exec();
+		return res.status(200).json(users);
 	} catch (error) {
 		return res.status(404).json({
 			statusCode: 404,
@@ -20,8 +21,8 @@ export const list = async (req, res) => {
 /* ::::::::: Get all users ::::::::::::::: */
 export const read = async (req, res) => {
 	try {
-		const user = await User.findOne({ _id: req.params.id }).exec()
-		return res.status(200).json(user)
+		const user = await User.findOne({ _id: req.params.id }).exec();
+		return res.status(200).json(user);
 	} catch (error) {
 		return res.status(404).json({
 			statusCode: 404,
@@ -39,10 +40,10 @@ export const getUser = async (req, res) => {
 				username: user.username,
 				avatar: user.avatar,
 			});
-		}
-		else return res.status(404).json({
-			message: "Cannot find user!"
-		})
+		} else
+			return res.status(404).json({
+				message: "Cannot find user!",
+			});
 	} catch (error) {
 		return res.status(404).json({
 			statusCode: 404,
@@ -214,13 +215,12 @@ export const activateAccount = async (req, res) => {
 		}
 		/* Save account to database */
 		const newAccount = await new User(decodedToken).save();
-
-		/* Create default playlist in library */
-		await new Playlist({
-			title: "Liked Tracks",
+		await new Collection({
 			creator: newAccount._id,
-			tracks: []
-		}).save()
+			albums: [],
+			tracks: [],
+			artists: [],
+		});
 
 		return res.status(201).json({
 			id: newAccount._id,
@@ -237,7 +237,7 @@ export const activateAccount = async (req, res) => {
 
 export const update = async (req, res) => {
 	try {
-		console.log(req.body)
+		console.log(req.body);
 		const updatedUser = await User.findOneAndUpdate({ _id: req.auth }, req.body, { new: true });
 		console.log(updatedUser);
 		return res.status(201).json(updatedUser);

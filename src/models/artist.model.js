@@ -18,11 +18,5 @@ const artistSchema = mongoose.Schema({
 	desc: {
 		type: String,
 	},
-	followers: [
-		{
-			type: mongoose.Schema.Types.ObjectId,
-			ref: "Users",
-		},
-	],
 });
 export default mongoose.model("Artist", artistSchema);

@@ -10,7 +10,7 @@ import artistRouter from "./routes/artist.route";
 import genreRouter from "./routes/genre.route";
 import playListRouter from "./routes/playlist.route";
 import albumRouter from "./routes/album.route";
-import collectionRouter from "./routes/collection.route"
+import collectionRouter from "./routes/collection.route";
 
 const app = express();
 

@@ -4,16 +4,9 @@ import mongoose from "mongoose";
 
 /* ================ Connect to mongoDB ================== */
 mongoose
-	.connect(
-		process.env.DATABASE_URI,
-		{
-			useNewUrlParser: true,
-			useUnifiedTopology: true,
-		},
-		{ serverSelectionTimeoutMS: 5000 },
-	)
+	.connect(process.env.DATABASE_URI, { serverSelectionTimeoutMS: 5000 })
 	.then((res) => console.log("Connected to database!"))
-	.catch((err) => console.log("Failed to connect to database! ", err));
+	.catch((err) => console.log(err));
 
 /* ======================== Run Server ============================= */
 

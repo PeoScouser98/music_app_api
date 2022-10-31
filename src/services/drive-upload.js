@@ -66,4 +66,3 @@ export const deleteFile = async (req, res) => {
 		});
 	}
 };
-
