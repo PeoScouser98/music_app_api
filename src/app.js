@@ -11,6 +11,7 @@ import genreRouter from "./routes/genre.route";
 import playListRouter from "./routes/playlist.route";
 import albumRouter from "./routes/album.route";
 import collectionRouter from "./routes/collection.route";
+import searchRouter from "./routes/search.route";
 
 const app = express();
 
@@ -28,7 +29,7 @@ app.get("/", (req, res) => {
 	}
 });
 app.get("/activate-account", (req, res) => {
-	res.sendFile(path.resolve(__dirname, "./views/verify_account.html"));
+	res.sendFile(path.resolve(__dirname, "./views/verify-account.html"));
 });
 
 app.use("/api", trackRouter);
@@ -38,5 +39,6 @@ app.use("/api", genreRouter);
 app.use("/api", playListRouter);
 app.use("/api", albumRouter);
 app.use("/api", collectionRouter);
+app.use("/api", searchRouter);
 
 export default app;

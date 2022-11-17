@@ -10,6 +10,5 @@ router.post("/album", checkAccessToken, isAdmin, create);
 router.patch("/album/:id", checkAccessToken, isAdmin, update);
 router.delete("/album/:id", checkAccessToken, isAdmin, del);
 router.patch("/album/remove/:id", checkAccessToken, isAdmin, removeFromAlbum);
-// router.patch("/album/add/:id", checkAccessToken, isAdmin, addToAlbum);
 
 export default router;

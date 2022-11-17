@@ -6,11 +6,11 @@ export const list = async (req, res) => {
 		if (req.auth) {
 			const playlists = await Playlist.find({ user: req.auth }).exec();
 			return res.status(200).json(playlists);
-		}
-		else return res.status(200).json({
-			statusCode: 401,
-			message: "Require signin!"
-		})
+		} else
+			return res.status(200).json({
+				statusCode: 401,
+				message: "Require signin!",
+			});
 	} catch (error) {
 		res.status(404).json({
 			message: "Không có playlist nào",
@@ -25,7 +25,7 @@ export const read = async (req, res) => {
 				select: "_id title trackSrc downloadUrl duration listen artists album",
 				populate: {
 					path: "album artists",
-					select: "title name image avatar"
+					select: "title name image avatar",
 				},
 			})
 			.populate({ path: "creator", select: "username avatar role" })
@@ -52,25 +52,20 @@ export const create = async (req, res) => {
 
 export const update = async (req, res) => {
 	try {
-		if (req.body.track && req.query.action == "remove") {
-			console.log(req.body.track);
-			const updatedPlaylist = await Playlist.findOneAndUpdate(
-				{ _id: req.params.id },
-				{ $pull: { tracks: req.body.track } },
-				{ new: true },
-			);
-			return res.status(201).json(updatedPlaylist);
-		}
+		let updatedPlaylist;
 		if (req.body.track) {
-			const updatedPlaylist = await Playlist.findOneAndUpdate(
-				{ _id: req.params.id },
-				{ $push: { tracks: req.body.track } },
-				{ new: true, upsert: true },
-			);
-			return res.status(201).json(updatedPlaylist);
+			const playlistHasThisTrack = await Playlist.findOne({ _id: req.params.id, tracks: req.body.track }).exec();
+			console.log(playlistHasThisTrack);
+			if (!playlistHasThisTrack) {
+				updatedPlaylist = await Playlist.findOneAndUpdate({ _id: req.params.id }, { $push: { tracks: req.body.track } }, { new: true });
+				return res.status(201).json(updatedPlaylist);
+			} else {
+				updatedPlaylist = await Playlist.findOneAndUpdate({ _id: req.params.id }, { $pull: { tracks: req.body.track } }, { new: true, upsert: true });
+				return res.status(201).json(updatedPlaylist);
+			}
 		}
 
-		const updatedPlaylist = await Playlist.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true }).exec();
+		updatedPlaylist = await Playlist.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true }).exec();
 		return res.status(201).json(updatedPlaylist);
 	} catch (error) {
 		console.log(error);

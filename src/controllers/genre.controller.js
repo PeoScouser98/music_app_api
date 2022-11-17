@@ -40,7 +40,7 @@ export const create = async (req, res) => {
 
 export const update = async (req, res) => {
 	try {
-		const updatedGenre = await Genre.findOneAndUpdate({ _id: req.body.id }, req.body, { new: true });
+		const updatedGenre = await Genre.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true });
 		res.status(201).json(updatedGenre);
 	} catch (error) {
 		res.status(500).json({
@@ -51,7 +51,7 @@ export const update = async (req, res) => {
 
 export const del = async (req, res) => {
 	try {
-		const deletedGenre = await Genre.findOneAndDelete({ _id: req.body.id }).exec();
+		const deletedGenre = await Genre.findOneAndDelete({ _id: req.params.id }).exec();
 		res.status(204).json(deletedGenre);
 	} catch (error) {
 		res.status(500).json({

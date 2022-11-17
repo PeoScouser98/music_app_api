@@ -14,7 +14,7 @@ export const list = async (req, res) => {
 	} catch (error) {
 		console.log(error);
 		res.status(404).json({
-			message: "Không có bài hát nào",
+			message: "Cannot find track!",
 		});
 	}
 };
@@ -65,7 +65,7 @@ export const create = async (req, res) => {
 		return res.status(201).json(newTrack);
 	} catch (error) {
 		return res.status(500).json({
-			message: "Không thêm được bài hát",
+			message: "Cannot create new track!",
 		});
 	}
 };
@@ -80,7 +80,7 @@ export const update = async (req, res) => {
 	} catch (error) {
 		console.log(error);
 		return res.status(500).json({
-			message: "Không update được bài hát",
+			message: "Cannot update track!",
 		});
 	}
 };
@@ -93,7 +93,7 @@ export const del = async (req, res) => {
 		return res.status(204).json(deletedTrack);
 	} catch (error) {
 		return res.status(500).json({
-			message: "Không xóa được bài hát",
+			message: "Cannot remove track",
 		});
 	}
 };
