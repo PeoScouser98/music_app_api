@@ -8,12 +8,54 @@
   "_id": {
     "$oid": "6311d326005d60aaa704ff62"
   },
-  "name": "Balad",
+  "name": "US-UK",
   "__v": 0
 },{
   "_id": {
     "$oid": "631c9f9b181ddf8fa405fb29"
   },
   "name": "Dance/Electronic",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "636250c5946241fd6b208e25"
+  },
+  "name": "Rock",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "636250ce946241fd6b208e28"
+  },
+  "name": "R&B",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "636250e3946241fd6b208e2b"
+  },
+  "name": "Original Sound Track",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "63625116946241fd6b208e2e"
+  },
+  "name": "V-Pop",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "63625145946241fd6b208e31"
+  },
+  "name": "Pop-Rock",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "63625151946241fd6b208e34"
+  },
+  "name": "Rap",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "63625170946241fd6b208e37"
+  },
+  "name": "Podcasts",
   "__v": 0
 }]

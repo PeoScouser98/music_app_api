@@ -7,7 +7,7 @@ import mongoose from "mongoose";
 
 /* ::::::::::::::::::::::: Connect to mongoDB ::::::::::::::::::::::: */
 mongoose
-	.connect(process.env.DATABASE_URI, { serverSelectionTimeoutMS: 5000 })
+	.connect(process.env.DATABASE_URI)
 	.then((res) => console.log("Connected to database!"))
 	.catch((err) => console.log(err));
 
@@ -17,7 +17,7 @@ mongoose
 // });
 
 /* ::::::::::::::::::::::: Run Server ::::::::::::::::::::::: */
-
-app.listen(process.env.PORT, () => {
-	console.log(`Connected! Server is listening on Port ${process.env.PORT}`);
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+	console.log(`Connected! Server is listening on: http://localhost:${PORT}/`);
 });

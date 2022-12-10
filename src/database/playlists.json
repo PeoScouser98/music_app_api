@@ -10,22 +10,19 @@
   },
   "updatedAt": {
     "$date": {
-      "$numberLong": "1665850706302"
+      "$numberLong": "1670210044636"
     }
   },
   "__v": 0,
   "tracks": [
     {
-      "$oid": "6320a87bc89cdd1b04731ce7"
-    },
-    {
-      "$oid": "6337057d0ce31e0d7ce39932"
-    },
-    {
-      "$oid": "6337057d0ce31e0d7ce39932"
-    },
-    {
       "$oid": "63307d5af871851debc186da"
+    },
+    {
+      "$oid": "6330392df8c32c8253cecf69"
+    },
+    {
+      "$oid": "63303821448a50b9193be2d3"
     }
   ],
   "creator": {
@@ -35,13 +32,16 @@
   "_id": {
     "$oid": "63289f99ba571172412752e5"
   },
-  "title": "Dubstep",
+  "title": "Dubstep <3",
   "tracks": [
     {
       "$oid": "634404ac1a3e8147d768251b"
     },
     {
       "$oid": "63303821448a50b9193be2d3"
+    },
+    {
+      "$oid": "634403d41a3e8147d76824ab"
     }
   ],
   "createdAt": {
@@ -51,7 +51,7 @@
   },
   "updatedAt": {
     "$date": {
-      "$numberLong": "1665853022742"
+      "$numberLong": "1669750826478"
     }
   },
   "__v": 0,
@@ -68,19 +68,10 @@
   },
   "tracks": [
     {
-      "$oid": "6337057d0ce31e0d7ce39932"
+      "$oid": "63303821448a50b9193be2d3"
     },
     {
-      "$oid": "6341ac345c59c9d855434f65"
-    },
-    {
-      "$oid": "6341ac5a5c59c9d855434f6d"
-    },
-    {
-      "$oid": "6341ae175c59c9d855434f8d"
-    },
-    {
-      "$oid": "6341a6045c59c9d855434ef5"
+      "$oid": "634403d41a3e8147d76824ab"
     }
   ],
   "createAt": {
@@ -95,7 +86,7 @@
   },
   "updatedAt": {
     "$date": {
-      "$numberLong": "1665759785012"
+      "$numberLong": "1667407866195"
     }
   },
   "__v": 0
@@ -121,6 +112,88 @@
   "updatedAt": {
     "$date": {
       "$numberLong": "1663609191922"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "638d61d88bf64a638c9c1142"
+  },
+  "title": "hello",
+  "creator": {
+    "$oid": "632842571fbc3251071a8818"
+  },
+  "tracks": [
+    {
+      "$oid": "63307d5af871851debc186da"
+    }
+  ],
+  "image": "../../assets/img/default-thumbnail.png",
+  "createAt": {
+    "$date": {
+      "$numberLong": "1670173200000"
+    }
+  },
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1670210008788"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1670216033495"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "638d61d88bf64a638c9c1144"
+  },
+  "title": "hello",
+  "creator": {
+    "$oid": "632842571fbc3251071a8818"
+  },
+  "tracks": [],
+  "image": "../../assets/img/default-thumbnail.png",
+  "createAt": {
+    "$date": {
+      "$numberLong": "1670173200000"
+    }
+  },
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1670210008792"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1670210008792"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "638d796c7f39e7b9f2716bdc"
+  },
+  "title": "hello",
+  "creator": {
+    "$oid": "632842571fbc3251071a8818"
+  },
+  "tracks": [],
+  "image": "../../assets/img/default-thumbnail.png",
+  "createAt": {
+    "$date": {
+      "$numberLong": "1670173200000"
+    }
+  },
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1670216044541"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1670216044541"
     }
   },
   "__v": 0

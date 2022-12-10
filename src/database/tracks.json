@@ -5,7 +5,6 @@
   "genre": {
     "$oid": "631c9f9b181ddf8fa405fb29"
   },
-  "album": [],
   "fileId": "1ysw1QMknL8G7mVzNsbtMo70UCN5yPxpP",
   "thumbnail": "",
   "listen": 17020355,
@@ -66,8 +65,7 @@
   "duration": 233.325714,
   "album": {
     "$oid": "632fbe9fd5cc493189f74ea0"
-  },
-  "followers": []
+  }
 },{
   "_id": {
     "$oid": "63303821448a50b9193be2d3"
@@ -102,8 +100,7 @@
   "duration": 235.304,
   "album": {
     "$oid": "632fc237d5cc493189f74ebc"
-  },
-  "followers": []
+  }
 },{
   "_id": {
     "$oid": "6330392df8c32c8253cecf69"
@@ -165,7 +162,7 @@
   },
   "updatedAt": {
     "$date": {
-      "$numberLong": "1666980961621"
+      "$numberLong": "1667146007509"
     }
   },
   "trackSrc": "https://docs.google.com/uc?export=download&id=127pr6dumoPaSaLeUjvjkC6LLLVfJLeZX",
@@ -173,8 +170,7 @@
   "__v": 0,
   "album": {
     "$oid": "6333cd0e01e5124cabdf751c"
-  },
-  "followers": []
+  }
 },{
   "_id": {
     "$oid": "6337057d0ce31e0d7ce39932"
@@ -209,12 +205,7 @@
   "__v": 0,
   "album": {
     "$oid": "632fbe9fd5cc493189f74ea0"
-  },
-  "followers": [
-    {
-      "$oid": "632842571fbc3251071a8818"
-    }
-  ]
+  }
 },{
   "_id": {
     "$oid": "6341a6045c59c9d855434ef5"
@@ -404,7 +395,7 @@
   },
   "updatedAt": {
     "$date": {
-      "$numberLong": "1665505730496"
+      "$numberLong": "1667145301406"
     }
   },
   "trackSrc": "https://docs.google.com/uc?export=download&id=1Glqc3S2VuLvYNrs4Q5PE-iGbBTQ0amWq",
