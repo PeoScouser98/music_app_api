@@ -15,21 +15,27 @@ const userSchema = mongoose.Schema(
 		},
 		username: {
 			type: String,
+			require: true,
 		},
 		address: {
 			type: String,
+			require: true,
 		},
 		avatar: {
 			type: String,
-
+			require: true,
 			default: "default.png",
 		},
 		phone: {
 			type: String,
+			require: true,
 		},
 		role: {
 			type: Number,
 			default: 0,
+		},
+		token: {
+			type: String,
 		},
 	},
 	{
