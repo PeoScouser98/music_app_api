@@ -12,7 +12,6 @@ export const checkAccessToken = async (req, res, next) => {
 			req.auth = id;
 		}
 		next();
-
 	} catch (error) {
 		if (error.name === "TokenExpiredError")
 			return res.status(200).json({
