@@ -6,8 +6,10 @@ import mongoose from "mongoose";
 // const io = new Server(server);
 
 /* ::::::::::::::::::::::: Connect to mongoDB ::::::::::::::::::::::: */
+const databaseUri =
+	process.env.NODE_ENV.indexOf("PRODUCTION") >= 0 ? process.env.DATABASE_URI : process.env.LOCAL_DATABASE_URI;
 mongoose
-	.connect(process.env.DATABASE_URI)
+	.connect(databaseUri)
 	.then((res) => console.log("Connected to database!"))
 	.catch((err) => console.log(err));
 

@@ -12,6 +12,7 @@ import playListRouter from "./routes/playlist.route";
 import albumRouter from "./routes/album.route";
 import collectionRouter from "./routes/collection.route";
 import searchRouter from "./routes/search.route";
+import { REFUSED } from "dns";
 
 const app = express();
 
@@ -23,7 +24,10 @@ app.use(compression({ level: 6 })); // compress data if payload is too large
 /* :::::::::::::::::: Using Routers :::::::::::::::::::: */
 app.get("/", (req, res) => {
 	try {
-		res.send("<h1>Server now is running!</h1>");
+		res.json({
+			status: 200,
+			message: "Server now is running!",
+		});
 	} catch (error) {
 		res.status(404).send("Server is stopped!");
 	}

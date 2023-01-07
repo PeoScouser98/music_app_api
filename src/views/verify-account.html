@@ -1,9 +1,11 @@
 <script>
+	import "dotenv/config";
+	const BASE_URL = process.env.NODE_ENV.indexOf("PRODUCTION") >= 0 ? process.env.SERVER : process.env.LOCAL_SERVER;
 	(async () => {
 		const params = new URLSearchParams(window.location.search);
 		if (params.has("token")) {
 			try {
-				const response = await fetch("http://localhost:3001/api/activate-account", {
+				const response = await fetch(`${BASE_URL}/api/activate-account`, {
 					method: "POST",
 					mode: "cors",
 					headers: {
