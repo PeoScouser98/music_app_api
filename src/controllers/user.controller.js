@@ -102,6 +102,7 @@ export const login = async (req, res) => {
 /* :::::::::::::::: Sign up ::::::::::::::::: */
 export const register = async (req, res) => {
 	try {
+		const BASE_URL = process.env.NODE_ENV.indexOf("PRODUCTION") >= 0 ? process.env.SERVER : process.env.LOCAL_SERVER;
 		const account = await User.findOne({ email: req.body.email }).exec();
 		if (account)
 			return res.status(500).json({
@@ -116,7 +117,7 @@ export const register = async (req, res) => {
 				subject: "Activate your account",
 				html: /*html */ `
 					<h3>On clicking this link, you are goin' to activate account!</h3>
-					<p><a href=${process.env.ACTIVATION_URL}?token=${token}>Active Link</a></p>
+					<p><a href=${BASE_URL}?token=${token}>Active Link</a></p>
 					<i>Thanks for register to be one of our member!</i>`,
 			},
 			(error, infor) => {

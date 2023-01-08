@@ -17,7 +17,7 @@ import { REFUSED } from "dns";
 const app = express();
 
 /* :::::::::::::::::: Using Middlewares :::::::::::::::::: */
-app.use(cors()); // public API
+app.use(cors({ origin: "*" })); // public API
 app.use(express.json()); // using JSON data type
 app.use(compression({ level: 6 })); // compress data if payload is too large
 

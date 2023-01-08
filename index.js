@@ -8,6 +8,7 @@ import mongoose from "mongoose";
 /* ::::::::::::::::::::::: Connect to mongoDB ::::::::::::::::::::::: */
 const databaseUri =
 	process.env.NODE_ENV.indexOf("PRODUCTION") >= 0 ? process.env.DATABASE_URI : process.env.LOCAL_DATABASE_URI;
+console.log(databaseUri);
 mongoose
 	.connect(databaseUri)
 	.then((res) => console.log("Connected to database!"))
