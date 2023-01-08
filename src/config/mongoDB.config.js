@@ -3,8 +3,8 @@ import mongoose from "mongoose";
 
 const connectMongoDB = async () => {
 	try {
-		const databaseUri =
-			process.env.NODE_ENV.indexOf("PRODUCTION") >= 0 ? process.env.DATABASE_URI : process.env.LOCAL_DATABASE_URI;
+		const databaseUri = process.env.DATABASE_URI;
+		console.log(databaseUri);
 		mongoose.set("strictQuery", false);
 		await mongoose.connect(databaseUri);
 		console.log("Connected to database!");
