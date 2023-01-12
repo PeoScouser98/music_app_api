@@ -4,12 +4,14 @@ import deleteFile from "../services/drive-upload";
 // lấy ra tất cả bài hát
 export const list = async (req, res) => {
 	try {
+		const limit = +req.query.limit || 5;
+		const skip = +req.query.skip || 0;
 		const tracks = await Track.find()
 			// .populate({ path: "artists album", select: "_id title name image avatar" })
 			.select("-uploader -createdAt -updatedAt -fileId -genre -__v")
 			.sort({ listen: -1 })
-			.skip(+req.query.skip)
-			.limit(+req.query.limit)
+			.skip(skip)
+			.limit(limit)
 			.exec();
 
 		return res.status(200).json(tracks);
