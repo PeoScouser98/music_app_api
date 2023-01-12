@@ -5,16 +5,19 @@ import deleteFile from "../services/drive-upload";
 export const list = async (req, res) => {
 	try {
 		const tracks = await Track.find()
-			.populate({ path: "artists album", select: "_id title name image avatar" })
+			// .populate({ path: "artists album", select: "_id title name image avatar" })
 			.select("-uploader -createdAt -updatedAt -fileId -genre -__v")
 			.sort({ listen: -1 })
+			.skip(+req.query.skip)
 			.limit(+req.query.limit)
 			.exec();
+
 		return res.status(200).json(tracks);
 	} catch (error) {
 		console.log(error);
-		res.status(404).json({
-			message: "Cannot find track!",
+		res.json({
+			status: 404,
+			message: "Cannot find tracks!",
 		});
 	}
 };

@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-
+import mongoosePopulate from "mongoose-autopopulate";
 const trackSchema = mongoose.Schema(
 	{
 		title: {
@@ -10,6 +10,7 @@ const trackSchema = mongoose.Schema(
 			{
 				type: mongoose.Schema.Types.ObjectId,
 				ref: "Artist",
+				autopopulate: { select: "_id  name avatar" },
 			},
 		],
 		genre: {
@@ -19,6 +20,7 @@ const trackSchema = mongoose.Schema(
 		album: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Album",
+			autopopulate: { select: "_id title image" },
 		},
 		fileId: {
 			type: String,
@@ -47,6 +49,7 @@ const trackSchema = mongoose.Schema(
 	{
 		strictPopulate: false,
 		timestamps: true,
+		toJSON: { virtuals: true },
 	},
 );
 
@@ -55,4 +58,8 @@ trackSchema.pre("save", function (next) {
 	this.downloadUrl = `https://drive.google.com/uc?authuser=0&id=${this.fileId}&export=download`;
 	next();
 });
+trackSchema.virtual("thumbnail").get(function () {
+	return this.album.image || this.artists[0].avatar || "/images/default-thumbnail.png";
+});
+trackSchema.plugin(mongoosePopulate);
 export default mongoose.model("Tracks", trackSchema);

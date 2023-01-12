@@ -55,7 +55,7 @@ export const getUser = async (req, res) => {
 /* :::::::::::::::::::: Tạo refresh token :::::::::::::::::::::: */
 export const refreshToken = async (req, res) => {
 	try {
-		const newAccessToken = jwt.sign({ id: req.params.id }, process.env.SECRET_KEY, { expiresIn: "1h" });
+		const newAccessToken = jwt.sign({ id: req.params.userId }, process.env.SECRET_KEY, { expiresIn: "1h" });
 		if (newAccessToken)
 			return res.status(200).json({
 				accessToken: newAccessToken,
@@ -96,6 +96,17 @@ export const login = async (req, res) => {
 			message: "Failed to sign in!",
 			err: error,
 		});
+	}
+};
+
+export const logout = async (req, res) => {
+	try {
+		return res.json({
+			status: 204,
+			message: "User logged out!",
+		});
+	} catch (error) {
+		console.log(error);
 	}
 };
 

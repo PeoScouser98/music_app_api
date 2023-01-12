@@ -3,14 +3,19 @@ import Track from "../models/track.model";
 import User from "../models/user.model";
 export const list = async (req, res) => {
 	try {
-		if (req.auth) {
-			const playlists = await Playlist.find({ user: req.auth }).exec();
-			return res.status(200).json(playlists);
-		} else
-			return res.status(200).json({
-				statusCode: 401,
-				message: "Require signin!",
-			});
+		const playlists = await Playlist.find().limit(req.query.limit).sort({ createdAt: -1 }).exec();
+		return res.status(200).json(playlists);
+	} catch (error) {
+		return res.json({
+			error: 404,
+			message: error.message,
+		});
+	}
+};
+export const listByUser = async (req, res) => {
+	try {
+		const playlistsByUser = await Playlist.find({ creator: req.params.user }).exec();
+		return res.status(200).json(playlistsByUser);
 	} catch (error) {
 		res.status(404).json({
 			message: "Không có playlist nào",
@@ -39,6 +44,7 @@ export const read = async (req, res) => {
 		});
 	}
 };
+
 export const create = async (req, res) => {
 	try {
 		const newPlaylist = await new Playlist({ creator: req.auth, ...req.body }).save();
@@ -57,10 +63,18 @@ export const update = async (req, res) => {
 			const playlistHasThisTrack = await Playlist.findOne({ _id: req.params.id, tracks: req.body.track }).exec();
 			console.log(playlistHasThisTrack);
 			if (!playlistHasThisTrack) {
-				updatedPlaylist = await Playlist.findOneAndUpdate({ _id: req.params.id }, { $push: { tracks: req.body.track } }, { new: true });
+				updatedPlaylist = await Playlist.findOneAndUpdate(
+					{ _id: req.params.id },
+					{ $push: { tracks: req.body.track } },
+					{ new: true },
+				);
 				return res.status(201).json(updatedPlaylist);
 			} else {
-				updatedPlaylist = await Playlist.findOneAndUpdate({ _id: req.params.id }, { $pull: { tracks: req.body.track } }, { new: true, upsert: true });
+				updatedPlaylist = await Playlist.findOneAndUpdate(
+					{ _id: req.params.id },
+					{ $pull: { tracks: req.body.track } },
+					{ new: true, upsert: true },
+				);
 				return res.status(201).json(updatedPlaylist);
 			}
 		}
