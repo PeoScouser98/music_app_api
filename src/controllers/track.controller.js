@@ -13,7 +13,7 @@ export const list = async (req, res) => {
 			.skip(skip)
 			.limit(limit)
 			.exec();
-
+		if (tracks.length === 1) return res.status(200).json(tracks[0]);
 		return res.status(200).json(tracks);
 	} catch (error) {
 		console.log(error);
