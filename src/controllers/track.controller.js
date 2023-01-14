@@ -4,7 +4,7 @@ import deleteFile from "../services/drive-upload";
 // lấy ra tất cả bài hát
 export const list = async (req, res) => {
 	try {
-		const limit = +req.query.limit || 5;
+		const limit = +req.query.limit || -1;
 		const skip = +req.query.skip || 0;
 		const tracks = await Track.find()
 			// .populate({ path: "artists album", select: "_id title name image avatar" })
