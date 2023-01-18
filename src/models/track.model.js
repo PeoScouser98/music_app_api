@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
-import mongoosePopulate from "mongoose-autopopulate";
+import mongooseAutoPopulate from "mongoose-autopopulate";
+import mongooseLeanVirtuals from "mongoose-lean-virtuals";
+
 const trackSchema = mongoose.Schema(
 	{
 		title: {
@@ -10,17 +12,18 @@ const trackSchema = mongoose.Schema(
 			{
 				type: mongoose.Schema.Types.ObjectId,
 				ref: "Artist",
-				autopopulate: { select: "_id  name avatar" },
+				autopopulate: { select: "_id name avatar" },
 			},
 		],
 		genre: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Genre",
+			autopopulate: true,
 		},
 		album: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Album",
-			autopopulate: { select: "_id title image" },
+			autopopulate: { select: "_id title image -artist" },
 		},
 		fileId: {
 			type: String,
@@ -50,6 +53,7 @@ const trackSchema = mongoose.Schema(
 		strictPopulate: false,
 		timestamps: true,
 		toJSON: { virtuals: true },
+		toObject: { virtuals: true },
 	},
 );
 
@@ -58,8 +62,15 @@ trackSchema.pre("save", function (next) {
 	this.downloadUrl = `https://drive.google.com/uc?authuser=0&id=${this.fileId}&export=download`;
 	next();
 });
+
 trackSchema.virtual("thumbnail").get(function () {
-	return this.album.image || this.artists[0].avatar || "/images/default-thumbnail.png";
+	try {
+		return this.album.image;
+	} catch (error) {
+		return this.artists[0].avatar || "/images/default-thumbnail.png";
+	}
 });
-trackSchema.plugin(mongoosePopulate);
+
+trackSchema.plugin(mongooseAutoPopulate, mongooseLeanVirtuals);
+
 export default mongoose.model("Tracks", trackSchema);

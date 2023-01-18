@@ -1,9 +1,10 @@
 import Playlist from "../models/playlist.model";
-import Track from "../models/track.model";
-import User from "../models/user.model";
+
 export const list = async (req, res) => {
 	try {
-		const playlists = await Playlist.find().limit(req.query.limit).sort({ createdAt: -1 }).exec();
+		const limit = req.query.limit || 10;
+		const skip = req.query.skip || 0;
+		const playlists = await Playlist.find().skip(skip).limit(limit).sort({ createdAt: -1 }).exec();
 		return res.status(200).json(playlists);
 	} catch (error) {
 		return res.json({

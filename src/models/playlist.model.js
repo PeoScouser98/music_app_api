@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import mongooseAutoPopulate from "mongoose-autopopulate";
+
 const playlistSchema = mongoose.Schema(
 	{
 		title: {
@@ -15,11 +17,12 @@ const playlistSchema = mongoose.Schema(
 			{
 				type: mongoose.Schema.Types.ObjectId,
 				ref: "Tracks",
+				autopopulate: { select: "-__v" },
 			},
 		],
 		image: {
 			type: String,
-			default: "../../assets/img/default-thumbnail.png"
+			default: "../../assets/img/default-thumbnail.png",
 		},
 		createAt: {
 			type: Date,
@@ -31,4 +34,5 @@ const playlistSchema = mongoose.Schema(
 		strictPopulate: false,
 	},
 );
+playlistSchema.plugin(mongooseAutoPopulate);
 export default mongoose.model("Playlist", playlistSchema);

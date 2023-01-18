@@ -1,6 +1,15 @@
 import express from "express";
 import multer from "multer";
-import { list, read, create, update, del, listByUploader, searchTrack } from "../controllers/track.controller";
+import {
+	list,
+	read,
+	create,
+	update,
+	del,
+	listByUploader,
+	searchTrack,
+	listRelatedTracks,
+} from "../controllers/track.controller";
 import { isAdmin, checkAccessToken } from "../middlewares/checkAuth.middleware";
 import { checkAudioFileExtension } from "../middlewares/checkFile.middleware";
 import { uploadFile, deleteFile } from "../services/drive-upload";
@@ -16,6 +25,7 @@ const upload = multer({
 
 router.get("/track", list);
 router.get("/track/user-uploaded/", checkAccessToken, listByUploader);
+router.get("/track/related/:genre", listRelatedTracks);
 router.get("/track/:id", read);
 router.post("/track", checkAccessToken, create);
 router.patch("/track/:id", checkAccessToken, update);

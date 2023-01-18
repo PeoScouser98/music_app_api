@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-
+import mongooseAutoPopulate from "mongoose-autopopulate";
 const collectionSchema = mongoose.Schema(
 	{
 		creator: {
@@ -31,4 +31,5 @@ const collectionSchema = mongoose.Schema(
 	},
 );
 
+collectionSchema.plugin(mongooseAutoPopulate);
 export default mongoose.model("Collections", collectionSchema);

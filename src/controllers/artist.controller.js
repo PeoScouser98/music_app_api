@@ -5,7 +5,9 @@ import Collection from "../models/collection.model";
 
 export const list = async (req, res) => {
 	try {
-		const artists = await Artist.find().exec();
+		const skip = +req.query.skip || 0;
+		const limit = +req.query.limit || 10;
+		const artists = await Artist.find().skip(skip).limit(limit).exec();
 		return res.status(200).json(artists);
 	} catch (error) {
 		return res.status(404).json({
@@ -16,17 +18,14 @@ export const list = async (req, res) => {
 
 export const read = async (req, res) => {
 	try {
-		const artist = await Artist.findOne({ _id: req.params.id }).exec();
-		const followers = await Collection.find({ artists: req.params.id }).select("_id").count();
+		const _artist = Artist.findOne({ _id: req.params.id }).exec();
+		const _followers = Collection.find({ artists: req.params.id }).select("_id").count();
+		const _tracks = Track.find({ artists: req.params.id }).sort({ listen: -1 }).exec();
+		const _albums = Album.find({ artist: req.params.id }).exec();
 
-		const tracks = await Track.find({ artists: req.params.id })
-			.populate({ path: "album artists", select: "_id name title image avatar" })
-			.select("-createdAt -updatedAt -__v -fileId")
-			.sort({ listen: -1 })
-			.exec();
-		const albums = await Album.find({ artist: req.params.id }).populate({ path: "artist", select: "name avatar" }).exec();
-		return res.status(200).json({ artist, tracks, albums, followers: followers });
-		// return res.status(200).json(followers);
+		const [artist, followers, tracks, albums] = await Promise.all([_artist, _followers, _tracks, _albums]);
+
+		return res.status(200).json({ artist, tracks, albums, followers });
 	} catch (error) {
 		res.status(404).json({
 			message: "Cannot find the artist!",
@@ -49,8 +48,17 @@ export const update = async (req, res) => {
 	try {
 		let updatedArtist;
 		if (req.body.follower) {
-			updatedArtist = await Artist.findByIdAndUpdate({ _id: req.params.id }, { $push: { followers: req.body.follower } }, { new: true, upsert: true }).exec();
-			if (req.query.action == "unfollow") updatedArtist = await Artist.findByIdAndUpdate({ _id: req.params.id }, { $pull: { followers: req.body.follower } }, { new: true, upsert: true }).exec();
+			updatedArtist = await Artist.findByIdAndUpdate(
+				{ _id: req.params.id },
+				{ $push: { followers: req.body.follower } },
+				{ new: true, upsert: true },
+			).exec();
+			if (req.query.action == "unfollow")
+				updatedArtist = await Artist.findByIdAndUpdate(
+					{ _id: req.params.id },
+					{ $pull: { followers: req.body.follower } },
+					{ new: true, upsert: true },
+				).exec();
 		}
 		updatedArtist = await Artist.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true }).exec();
 		return res.status(201).json(updatedArtist);

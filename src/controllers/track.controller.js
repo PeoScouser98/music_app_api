@@ -1,23 +1,18 @@
 import Track from "../models/track.model";
 import Comment from "../models/comment.model";
 import deleteFile from "../services/drive-upload";
+import Genre from "../models/genre.model";
 // lấy ra tất cả bài hát
 export const list = async (req, res) => {
 	try {
 		const limit = +req.query.limit || -1;
 		const skip = +req.query.skip || 0;
-		const tracks = await Track.find()
-			// .populate({ path: "artists album", select: "_id title name image avatar" })
-			.select("-uploader -createdAt -updatedAt -fileId -genre -__v")
-			.sort({ listen: -1 })
-			.skip(skip)
-			.limit(limit)
-			.exec();
+		const tracks = await Track.find().sort({ listen: -1 }).skip(skip).limit(limit).exec();
 		if (tracks.length === 1) return res.status(200).json(tracks[0]);
 		return res.status(200).json(tracks);
 	} catch (error) {
 		console.log(error);
-		res.json({
+		res.status(404).json({
 			status: 404,
 			message: "Cannot find tracks!",
 		});
@@ -28,16 +23,32 @@ export const list = async (req, res) => {
 export const listByUploader = async (req, res) => {
 	try {
 		console.log(req.auth);
-		const tracks = await Track.find({ uploader: req.auth })
-			.populate({ path: "artists album", select: "_id title name image avatar" })
-			.select("-uploader -createdAt -updatedAt -fileId -genre -__v")
-			.limit(+req.query.limit)
-			.sort({ createdAt: -1 })
-			.exec();
+		const tracks = await Track.find({ uploader: req.auth }).limit(+req.query.limit).sort({ createdAt: -1 }).exec();
 		return res.status(200).json(tracks);
 	} catch (error) {
 		return res.status(404).json({
 			message: "Cannot find tracks that uploaded by user",
+		});
+	}
+};
+
+export const listRelatedTracks = async (req, res) => {
+	try {
+		let genre = req.params.genre;
+		if (genre == "undefined")
+			Genre.findOne().then((data) => {
+				console.log(data);
+				genre = data._id;
+			});
+		console.log(genre);
+		const relatedTracks = await Track.find({ genre: genre }).limit(10).exec();
+		console.log(relatedTracks);
+		return res.status(200).json(relatedTracks);
+	} catch (error) {
+		console.log(error.message);
+		return res.status(200).json({
+			status: 404,
+			message: "Cannot find related tracks",
 		});
 	}
 };
@@ -69,7 +80,7 @@ export const create = async (req, res) => {
 		const newTrack = await new Track(req.body).save();
 		return res.status(201).json(newTrack);
 	} catch (error) {
-		return res.status(500).json({
+		return res.status(400).json({
 			message: "Cannot create new track!",
 		});
 	}
