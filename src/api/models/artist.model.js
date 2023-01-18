@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-
+import mongooseSlugGenerator from "mongoose-slug-generator";
 const artistSchema = mongoose.Schema(
 	{
 		name: {
@@ -25,5 +25,7 @@ const artistSchema = mongoose.Schema(
 		toJSON: { virtuals: true },
 	},
 );
+
+artistSchema.plugin(mongooseSlugGenerator);
 
 export default mongoose.model("Artist", artistSchema);

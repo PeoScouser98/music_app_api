@@ -32,4 +32,5 @@ const collectionSchema = mongoose.Schema(
 );
 
 collectionSchema.plugin(mongooseAutoPopulate);
+
 export default mongoose.model("Collections", collectionSchema);

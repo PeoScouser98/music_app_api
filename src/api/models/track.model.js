@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import mongooseAutoPopulate from "mongoose-autopopulate";
-import mongooseLeanVirtuals from "mongoose-lean-virtuals";
+import mongooseSlugGenerator from "mongoose-slug-generator";
 
 const trackSchema = mongoose.Schema(
 	{
@@ -8,6 +8,7 @@ const trackSchema = mongoose.Schema(
 			type: String,
 			require: true,
 		},
+		slug: { type: String, slug: ["title"], unique: true },
 		artists: [
 			{
 				type: mongoose.Schema.Types.ObjectId,
@@ -62,7 +63,10 @@ trackSchema.pre("save", function (next) {
 	this.downloadUrl = `https://drive.google.com/uc?authuser=0&id=${this.fileId}&export=download`;
 	next();
 });
-
+trackSchema.pre("find", function (next) {
+	if (this.slug === "") this.slug = this.title.split(" ").join("-");
+	next();
+});
 trackSchema.virtual("thumbnail").get(function () {
 	try {
 		return this.album.image;
@@ -71,6 +75,6 @@ trackSchema.virtual("thumbnail").get(function () {
 	}
 });
 
-trackSchema.plugin(mongooseAutoPopulate, mongooseLeanVirtuals);
+trackSchema.plugin(mongooseAutoPopulate, mongooseSlugGenerator);
 
 export default mongoose.model("Tracks", trackSchema);

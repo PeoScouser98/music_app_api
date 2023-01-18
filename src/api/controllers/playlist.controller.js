@@ -4,7 +4,7 @@ export const list = async (req, res) => {
 	try {
 		const limit = req.query.limit || 10;
 		const skip = req.query.skip || 0;
-		const playlists = await Playlist.find().skip(skip).limit(limit).sort({ createdAt: -1 }).exec();
+		const playlists = await Playlist.find({ public: true }).skip(skip).limit(limit).sort({ createdAt: -1 }).exec();
 		return res.status(200).json(playlists);
 	} catch (error) {
 		return res.json({
@@ -13,16 +13,29 @@ export const list = async (req, res) => {
 		});
 	}
 };
-export const listByUser = async (req, res) => {
+export const listPublicPlaylistsByUser = async (req, res) => {
 	try {
-		const playlistsByUser = await Playlist.find({ creator: req.params.user }).exec();
+		const playlistsByUser = await Playlist.find({ creator: req.params.userId }).select("-tracks").exec();
 		return res.status(200).json(playlistsByUser);
 	} catch (error) {
 		res.status(404).json({
-			message: "Không có playlist nào",
+			message: "Cannot find user playlists!",
 		});
 	}
 };
+
+export const listPrivatePlaylistsByUser = async (req, res) => {
+	try {
+		const playlists = await Playlist.find({ creator: req.params.userId, public: false }).select();
+		return res.status(200).json(playlists);
+	} catch (error) {
+		return res.status(404).json({
+			status: 404,
+			message: "Cannot find user playlists!",
+		});
+	}
+};
+
 export const read = async (req, res) => {
 	try {
 		const playlist = await Playlist.findOne({ _id: req.params.id, creator: req.auth })
@@ -41,7 +54,7 @@ export const read = async (req, res) => {
 	} catch (error) {
 		console.log(error);
 		res.status(404).json({
-			message: "Playlist không tồn tại",
+			message: "Playlist does not exist!",
 		});
 	}
 };
@@ -52,7 +65,7 @@ export const create = async (req, res) => {
 		return res.status(201).json(newPlaylist);
 	} catch (error) {
 		res.status(500).json({
-			message: "Không tạo mới được playlist",
+			message: "Failed to create new playlist!",
 		});
 	}
 };
@@ -85,7 +98,7 @@ export const update = async (req, res) => {
 	} catch (error) {
 		console.log(error);
 		res.status(500).json({
-			message: "Không update được playlist",
+			message: "Failed to update playlist!",
 		});
 	}
 };
@@ -96,7 +109,7 @@ export const del = async (req, res) => {
 		return res.status(204).json(deletedPlaylist);
 	} catch (error) {
 		res.status(500).json({
-			message: "Không xóa được playlist",
+			message: "Failed to delete playlist!",
 		});
 	}
 };

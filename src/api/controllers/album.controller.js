@@ -5,7 +5,7 @@ export const list = async (req, res) => {
 	try {
 		const skip = req.query.skip || 0;
 		const limit = req.query.limit || 10;
-		const data = await Album.find().skip(skip).limit(limit).sort({ createdAt: -1 }).select("-tracks");
+		const data = await Album.find().skip(skip).limit(limit).sort({ releaseDate: -1 }).select("-tracks");
 		return res.status(200).json(data);
 	} catch (error) {
 		return res.status(404).json({
@@ -13,6 +13,7 @@ export const list = async (req, res) => {
 		});
 	}
 };
+
 export const read = async (req, res) => {
 	try {
 		const album = await Album.findOne({ _id: req.params.id })

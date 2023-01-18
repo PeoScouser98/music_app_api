@@ -1,25 +1,31 @@
 import mongoose from "mongoose";
 import { createHmac } from "crypto";
 import "dotenv/config";
+import bcrypt from "bcrypt";
 
 const userSchema = mongoose.Schema(
 	{
 		email: {
 			type: String,
 			require: true,
+			trim: true,
 		},
 		password: {
 			type: String,
 			minLength: 8,
+			maxLength: 16,
 			require: true,
+			trim: true,
 		},
 		username: {
 			type: String,
 			require: true,
+			trim: true,
 		},
 		address: {
 			type: String,
 			require: true,
+			trim: true,
 		},
 		avatar: {
 			type: String,
@@ -32,31 +38,28 @@ const userSchema = mongoose.Schema(
 		},
 		role: {
 			type: Number,
+			enum: [0, 1],
 			default: 0,
-		},
-		token: {
-			type: String,
 		},
 	},
 	{
 		timestamps: true,
 	},
 );
+
 userSchema.methods = {
 	authenticate(password) {
-		return this.password == this.encryptPassword(password);
+		return bcrypt.compareSync(password, this.password);
 	},
 	encryptPassword: (password) => {
 		if (!password) return;
-		try {
-			return createHmac("sha256", process.env.SECRET_KEY).update(password).digest("hex");
-		} catch (error) {
-			console.log(error);
-		}
+		return bcrypt.hashSync(password, bcrypt.genSaltSync(10));
 	},
 };
+
 userSchema.pre("save", function (next) {
 	this.password = this.encryptPassword(this.password);
 	next();
 });
+
 export default mongoose.model("Users", userSchema);

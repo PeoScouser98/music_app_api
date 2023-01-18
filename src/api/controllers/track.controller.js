@@ -22,7 +22,7 @@ export const list = async (req, res) => {
 //
 export const listByUploader = async (req, res) => {
 	try {
-		console.log(req.auth);
+		// console.log(req.auth);
 		const tracks = await Track.find({ uploader: req.auth }).limit(+req.query.limit).sort({ createdAt: -1 }).exec();
 		return res.status(200).json(tracks);
 	} catch (error) {
@@ -40,9 +40,9 @@ export const listRelatedTracks = async (req, res) => {
 				console.log(data);
 				genre = data._id;
 			});
-		console.log(genre);
+		// console.log(genre);
 		const relatedTracks = await Track.find({ genre: genre }).limit(10).exec();
-		console.log(relatedTracks);
+		// console.log(relatedTracks);
 		return res.status(200).json(relatedTracks);
 	} catch (error) {
 		console.log(error.message);
