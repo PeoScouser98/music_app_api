@@ -38,7 +38,7 @@ export const listPrivatePlaylistsByUser = async (req, res) => {
 
 export const read = async (req, res) => {
 	try {
-		const playlist = await Playlist.findOne({ _id: req.params.id, creator: req.auth })
+		const playlist = await Playlist.findOne({ _id: req.params.id })
 			.populate({
 				path: "tracks",
 				select: "_id title trackSrc downloadUrl duration listen artists album",
