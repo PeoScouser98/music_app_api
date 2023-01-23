@@ -1,6 +1,6 @@
 import Track from "../models/track.model";
 import Comment from "../models/comment.model";
-import deleteFile from "../services/drive-upload";
+import deleteFile from "../../app/drive-upload";
 import Genre from "../models/genre.model";
 // lấy ra tất cả bài hát
 export const list = async (req, res) => {

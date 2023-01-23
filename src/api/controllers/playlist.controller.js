@@ -15,9 +15,16 @@ export const list = async (req, res) => {
 };
 export const listPublicPlaylistsByUser = async (req, res) => {
 	try {
-		const playlistsByUser = await Playlist.find({ creator: req.params.userId }).select("-tracks").exec();
+		const skip = req.query.skip || 0;
+		const limit = req.query.limit || 10;
+		const playlistsByUser = await Playlist.find({ creator: req.params.userId })
+			.populate({ path: "tracks", select: "thumbnail" })
+			.skip(skip)
+			.limit(limit)
+			.exec();
 		return res.status(200).json(playlistsByUser);
 	} catch (error) {
+		console.log(error);
 		res.status(404).json({
 			message: "Cannot find user playlists!",
 		});
@@ -38,18 +45,7 @@ export const listPrivatePlaylistsByUser = async (req, res) => {
 
 export const read = async (req, res) => {
 	try {
-		const playlist = await Playlist.findOne({ _id: req.params.id })
-			.populate({
-				path: "tracks",
-				select: "_id title trackSrc downloadUrl duration listen artists album",
-				populate: {
-					path: "album artists",
-					select: "title name image avatar",
-				},
-			})
-			.populate({ path: "creator", select: "username avatar role" })
-			.select("-__v -updatedAt -createdAt")
-			.exec();
+		const playlist = await Playlist.findOne({ _id: req.params.id }).select("-__v -updatedAt -createdAt").exec();
 		return res.status(200).json(playlist);
 	} catch (error) {
 		console.log(error);

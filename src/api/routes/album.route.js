@@ -4,11 +4,11 @@ import { checkAccessToken, isAdmin } from "../middlewares/checkAuth.middleware";
 
 const router = express.Router();
 
-router.get("/album", list);
-router.get("/album/:id", read);
-router.post("/album", checkAccessToken, isAdmin, create);
-router.patch("/album/:id", checkAccessToken, isAdmin, update);
-router.delete("/album/:id", checkAccessToken, isAdmin, del);
-router.patch("/album/remove/:id", checkAccessToken, isAdmin, removeFromAlbum);
+router.get("/albums", list);
+router.get("/albums/:id", read);
+router.post("/albums", checkAccessToken, isAdmin, create);
+router.patch("/albums/:id", checkAccessToken, isAdmin, update);
+router.delete("/albums/:id", checkAccessToken, isAdmin, del);
+router.patch("/albums/remove/:id", checkAccessToken, isAdmin, removeFromAlbum);
 
 export default router;

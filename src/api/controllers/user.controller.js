@@ -1,6 +1,6 @@
 import User from "../models/user.model";
 import Playlist from "../models/playlist.model";
-import transporter from "../services/mailer";
+import transporter from "../../app/mailer";
 import "dotenv/config";
 import jwt from "jsonwebtoken";
 import { createHmac } from "crypto";

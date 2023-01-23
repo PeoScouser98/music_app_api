@@ -3,12 +3,10 @@ import { list, read, create, update, del, albumByArtist, trackByArtist } from ".
 import { checkAccessToken, isAdmin } from "../middlewares/checkAuth.middleware";
 const router = express.Router();
 
-router.get("/artist", list);
-router.get("/artist/:id", read);
-router.post("/artist", checkAccessToken, isAdmin, create);
-router.patch("/artist/:id", checkAccessToken, isAdmin, update);
-router.delete("/artist/:id", checkAccessToken, isAdmin, del);
-
-
+router.get("/artists", list);
+router.get("/artists/:id", read);
+router.post("/artists", checkAccessToken, isAdmin, create);
+router.patch("/artists/:id", checkAccessToken, isAdmin, update);
+router.delete("/artists/:id", checkAccessToken, isAdmin, del);
 
 export default router;

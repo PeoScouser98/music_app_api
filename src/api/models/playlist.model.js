@@ -22,10 +22,7 @@ const playlistSchema = mongoose.Schema(
 				autopopulate: { select: "-__v" },
 			},
 		],
-		image: {
-			type: String,
-			default: "/images/default-album-image.png",
-		},
+
 		createAt: {
 			type: Date,
 			default: new Date().toLocaleDateString(),
@@ -51,10 +48,14 @@ const playlistSchema = mongoose.Schema(
 // 	next();
 // });
 
-// playlistSchema.virtual("thumbnail").get(function () {
-// 	console.log("playlist tracks:>>", this);
-// 	return [];
-// });
+playlistSchema.virtual("thumbnail").get(function () {
+	console.log("playlist tracks:>>", this.tracks);
+	if (this.tracks.length < 4) return "/images/default-thumbnail.png";
+	return this.tracks
+		.filter((track, index, thisArg) => thisArg.findIndex(track) === index)
+		.slice(0, 4)
+		.map((track) => track.thumbnail);
+});
 
 playlistSchema.plugin(mongooseAutoPopulate, mongooseSlugGenerator);
 export default mongoose.model("Playlist", playlistSchema);
