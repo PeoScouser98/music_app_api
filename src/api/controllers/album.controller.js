@@ -16,13 +16,9 @@ export const list = async (req, res) => {
 
 export const read = async (req, res) => {
 	try {
-		const album = await Album.findOne({ _id: req.params.id })
-			.populate({ path: "artist", select: "_id name" })
-			.select("title image")
-			.exec();
-		const tracks = await Track.find({ album: req.params.id })
-			.populate({ path: "artists album", select: "_id name title avatar image" })
-			.select("-__v -updatedAt -createdAt -fileId -uploader");
+		const album = await Album.findOne({ _id: req.params.id }).exec();
+		const tracks = await Track.find({ album: req.params.id }).exec();
+
 		return res.status(200).json({ album, tracks });
 	} catch (error) {
 		console.log(error.message);

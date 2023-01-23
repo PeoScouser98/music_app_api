@@ -39,18 +39,9 @@ const playlistSchema = mongoose.Schema(
 		toObject: { virtuals: true },
 	},
 );
-// playlistSchema.pre("find", function (next) {
-// 	if (this.slug === "" || !this.slug) {
-// 		console.log(":>>>>", this.schema);
-// 		this.slug = this.title.split(" ").join("-");
-// 		return next();
-// 	}
-// 	next();
-// });
 
 playlistSchema.virtual("thumbnail").get(function () {
-	console.log("playlist tracks:>>", this.tracks);
-	if (this.tracks.length < 4) return "/images/default-thumbnail.png";
+	if (this.tracks.length < 4) return "/images/default-album-image.png";
 	return this.tracks
 		.filter((track, index, thisArg) => thisArg.findIndex(track) === index)
 		.slice(0, 4)
