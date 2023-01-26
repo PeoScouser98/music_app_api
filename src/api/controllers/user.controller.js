@@ -1,15 +1,14 @@
-import User from "../models/user.model";
-import Playlist from "../models/playlist.model";
-import transporter from "../../app/mailer";
+import { createHmac } from "crypto";
 import "dotenv/config";
 import jwt from "jsonwebtoken";
-import { createHmac } from "crypto";
+import transporter from "../../app/mailer";
 import Collection from "../models/collection.model";
+import User from "../models/user.model";
 
 /* ::::::::: Get all users ::::::::::::::: */
 export const list = async (req, res) => {
 	try {
-		const users = await User.find().exec();
+		const users = await User.find().select("_id username avatar").exec();
 		return res.status(200).json(users);
 	} catch (error) {
 		return res.status(404).json({
@@ -21,7 +20,7 @@ export const list = async (req, res) => {
 /* ::::::::: Get all users ::::::::::::::: */
 export const read = async (req, res) => {
 	try {
-		const user = await User.findOne({ _id: req.params.id }).exec();
+		const user = await User.findOne({ _id: req.params.id }).select("_id avatar username").exec();
 		return res.status(200).json(user);
 	} catch (error) {
 		return res.status(404).json({
@@ -34,12 +33,8 @@ export const read = async (req, res) => {
 export const getUser = async (req, res) => {
 	try {
 		if (req.auth) {
-			const user = await User.findOne({ _id: req.auth }).exec();
-			return res.status(200).json({
-				statusCode: 200,
-				username: user.username,
-				avatar: user.avatar,
-			});
+			const user = await User.findOne({ _id: req.auth }).select("-password -role").exec();
+			return res.status(200).json(user);
 		} else
 			return res.status(404).json({
 				message: "Cannot find user!",
@@ -55,12 +50,11 @@ export const getUser = async (req, res) => {
 /* :::::::::::::::::::: Tạo refresh token :::::::::::::::::::::: */
 export const refreshToken = async (req, res) => {
 	try {
-		const newAccessToken = jwt.sign({ id: req.params.userId }, process.env.SECRET_KEY, { expiresIn: "1h" });
-		if (newAccessToken)
-			return res.status(200).json({
-				accessToken: newAccessToken,
-			});
+		const newAccessToken = jwt.sign({ id: req.params.userId }, process.env.SECRET_KEY, { expiresIn: "15s" });
+		console.log("new access token", newAccessToken);
+		return res.status(200).json(newAccessToken);
 	} catch (error) {
+		console.log(error.message);
 		return res.status(500).json({
 			message: "Cannot create new access token!",
 		});
@@ -87,7 +81,6 @@ export const login = async (req, res) => {
 
 		return res.status(200).json({
 			id: account._id,
-			username: account.username,
 			accessToken: token,
 		});
 	} catch (error) {

@@ -14,8 +14,8 @@ export const checkAccessToken = async (req, res, next) => {
 		next();
 	} catch (error) {
 		return res.status(200).json({
-			statusCode: 401,
-			message: error.message + ", " + "Require sign in !",
+			status: 401,
+			message: error.message,
 		});
 	}
 };
