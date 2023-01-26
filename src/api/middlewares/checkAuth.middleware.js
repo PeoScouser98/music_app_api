@@ -13,19 +13,17 @@ export const checkAccessToken = async (req, res, next) => {
 		}
 		next();
 	} catch (error) {
-		if (error.name === "TokenExpiredError")
-			return res.status(200).json({
-				error,
-				statusCode: 401,
-				message: "Require sign in !",
-			});
+		return res.status(200).json({
+			statusCode: 401,
+			message: error.message + ", " + "Require sign in !",
+		});
 	}
 };
 
 export const isAdmin = async (req, res, next) => {
 	if (req.role != 1)
 		return res.status(401).json({
-			message: "Không phải admin! Chim cút !",
+			message: "Unauthorized error! You are not admin!",
 		});
 	next();
 };

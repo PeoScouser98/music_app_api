@@ -13,6 +13,7 @@ import albumRouter from "./api/routes/album.route";
 import collectionRouter from "./api/routes/collection.route";
 import searchRouter from "./api/routes/search.route";
 import morgan from "morgan";
+
 const app = express();
 
 /* :::::::::::::::::: Using Middlewares :::::::::::::::::: */
@@ -20,6 +21,7 @@ app.use(cors({ origin: "*" })); // public API
 app.use(express.json()); // using JSON data type
 app.use(compression({ level: 6 })); // compress data if payload is too large
 app.use(morgan("tiny"));
+
 /* :::::::::::::::::: Using Routers :::::::::::::::::::: */
 app.get("/", (req, res) => {
 	try {

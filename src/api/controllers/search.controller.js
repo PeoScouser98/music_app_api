@@ -19,12 +19,14 @@ const search = async (req, res) => {
 			})
 			.select("-__v -fileId -createdAt -updatedAt -uploader ")
 			.limit(10);
-		const playlists = await Playlist.find({ title: pattern }).populate({ path: "creator artist", select: "username name" }).limit(3);
+		const playlists = await Playlist.find({ title: pattern })
+			.populate({ path: "creator artist", select: "username name" })
+			.limit(3);
 		return res.status(200).json({ tracks, artists, playlists, albums });
 	} catch (error) {
-		return res.status(404).json({
+		return res.json({
 			message: "No result",
-			error: error.message,
+			status: 404,
 		});
 	}
 };
