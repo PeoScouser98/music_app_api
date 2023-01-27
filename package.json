@@ -4,8 +4,10 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"start": "nodemon index.js --exec babel-node -e js",
-		"dev": "SET NODE_ENV=DEVELOPMENT && nodemon index.js --exec babel-node -e js"
+		"build": "babel src -d build",
+		"serve": "node ./build/index.js",
+		"start": "npm run build && npm run serve",
+		"dev": "SET NODE_ENV=DEVELOPMENT && nodemon ./src/index.js --exec babel-node -e js"
 	},
 	"repository": {
 		"type": "git",
@@ -19,10 +21,9 @@
 	},
 	"homepage": "https://github.com/PeoScouser98/music_app_api",
 	"dependencies": {
+		"@babel/runtime": "^7.20.13",
 		"@vercel/node": "^2.5.11",
-		"babel-cli": "^6.26.0",
-		"babel-preset-env": "^1.7.0",
-		"babel-preset-stage-0": "^6.24.1",
+		"babel-plugin-transform-runtime": "^6.23.0",
 		"bcrypt": "^5.1.0",
 		"compression": "^1.7.4",
 		"cookie-parser": "^1.4.6",
@@ -30,6 +31,7 @@
 		"dotenv": "^16.0.1",
 		"express": "^4.18.1",
 		"express-jwt": "^7.7.5",
+		"firebase-admin": "^11.5.0",
 		"googleapis": "^107.0.0",
 		"heroku": "^7.67.1",
 		"http-errors": "^2.0.0",
@@ -45,5 +47,12 @@
 		"nodemon": "^2.0.20",
 		"path": "^0.12.7",
 		"socket.io": "^4.5.3"
+	},
+	"devDependencies": {
+		"babel-cli": "^6.26.0",
+		"babel-polyfill": "^6.26.0",
+		"babel-preset-env": "^1.7.0",
+		"babel-preset-es2015": "^6.24.1",
+		"babel-preset-stage-0": "^6.24.1"
 	}
 }
