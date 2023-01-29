@@ -15,7 +15,6 @@ export const checkAccessToken = async (req, res, next) => {
 			if (error) {
 				throw createHttpError.Unauthorized(error.message);
 			}
-			console.log(payload);
 			return payload;
 		});
 		// const { role } = await User.findOne({ _id: payload }).select("role");
@@ -24,7 +23,7 @@ export const checkAccessToken = async (req, res, next) => {
 
 		next();
 	} catch (error) {
-		console.log(error.message);
+		console.log(error);
 		return res.status(200).json({
 			status: 401,
 			message: error.message,

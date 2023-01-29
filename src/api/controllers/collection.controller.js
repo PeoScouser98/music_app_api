@@ -2,6 +2,7 @@ import Artist from "../models/artist.model";
 import Track from "../models/track.model";
 import Album from "../models/album.model";
 import Collection from "../models/collection.model";
+import createHttpError from "http-errors";
 
 /* :::::::::::: Get Collection ::::::::::::::::: */
 export const getArtistsCollection = async (req, res) => {
@@ -27,22 +28,21 @@ export const getArtistsCollection = async (req, res) => {
 
 export const getTracksCollection = async (req, res) => {
 	try {
-		if (req.auth) {
-			const { tracks } = await Collection.findOne({ creator: req.auth })
-				.populate({
-					path: "tracks",
-					select: "-fileId",
-					populate: { path: "album artists", select: "-wallpaper -desc -__v -artist" },
-				})
-				.select("-_id tracks")
-				.limit(req.query.limit || 10)
-				.exec();
-			return res.status(200).json(tracks);
-		} else
-			return res.status(401).json({
-				message: "Require sign in!",
-			});
+		console.log(req.auth);
+		if (!req.auth) throw createHttpError.Unauthorized("Required signin!");
+		const { tracks } = await Collection.findOne({ creator: req.auth })
+			.populate({
+				path: "tracks",
+				select: "-fileId",
+				populate: { path: "album artists", select: "-wallpaper -desc -__v -artist" },
+			})
+			.select("-_id tracks")
+			.limit(req.query.limit || 10)
+			.exec();
+		console.log(tracks);
+		return res.status(200).json(tracks);
 	} catch (error) {
+		console.log(error);
 		return res.status(404).json({
 			message: "Cannot find tracks",
 			error: error.message,

@@ -51,7 +51,7 @@ export const refreshToken = async (req, res) => {
 		if (!user) throw createHttpError.BadRequest("Cannot find user");
 		const privateKey = readFileSync(path.resolve(path.join(__dirname, "../../keys/private.pem")));
 		const newAccessToken = jwt.sign({ id: user._id }, privateKey, { algorithm: "RS256", expiresIn: "5m" });
-		console.log("new access token", newAccessToken);
+
 		return res.status(200).json(newAccessToken);
 		/**
 		 * verify user
