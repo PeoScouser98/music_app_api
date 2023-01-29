@@ -47,14 +47,12 @@ const userSchema = mongoose.Schema(
 	},
 );
 
-userSchema.methods = {
-	authenticate(password) {
-		return bcrypt.compareSync(password, this.password);
-	},
-	encryptPassword: (password) => {
-		if (!password) return;
-		return bcrypt.hashSync(password, bcrypt.genSaltSync(10));
-	},
+userSchema.methods.authenticate = function (password) {
+	return bcrypt.compareSync(password, this.password);
+};
+userSchema.methods.encryptPassword = function (password) {
+	if (!password) return;
+	return bcrypt.hashSync(password, bcrypt.genSaltSync(10));
 };
 
 userSchema.pre("save", function (next) {
