@@ -8,7 +8,10 @@ export const getArtistsCollection = async (req, res) => {
 	try {
 		console.log(req.auth);
 		if (req.auth) {
-			const { artists } = await Collection.findOne({ creator: req.auth }).populate({ path: "artists" }).select("artists").exec();
+			const { artists } = await Collection.findOne({ creator: req.auth })
+				.populate({ path: "artists" })
+				.select("artists")
+				.exec();
 			return res.status(200).json(artists);
 		} else
 			return res.status(401).json({
@@ -32,7 +35,7 @@ export const getTracksCollection = async (req, res) => {
 					populate: { path: "album artists", select: "-wallpaper -desc -__v -artist" },
 				})
 				.select("-_id tracks")
-				.limit(req.query.limit)
+				.limit(req.query.limit || 10)
 				.exec();
 			return res.status(200).json(tracks);
 		} else
@@ -74,8 +77,18 @@ export const updateTracksCollection = async (req, res) => {
 			const track = await Collection.findOne({ creator: req.auth, tracks: req.body.track }).select("tracks").exec();
 			console.log(track);
 			let tracksCollection;
-			if (!track) tracksCollection = await Collection.findOneAndUpdate({ creator: req.auth }, { $push: { tracks: req.body.track } }, { new: true, upsert: true }).exec();
-			else tracksCollection = await Collection.findOneAndUpdate({ creator: req.auth }, { $pull: { tracks: req.body.track } }, { new: true });
+			if (!track)
+				tracksCollection = await Collection.findOneAndUpdate(
+					{ creator: req.auth },
+					{ $push: { tracks: req.body.track } },
+					{ new: true, upsert: true },
+				).exec();
+			else
+				tracksCollection = await Collection.findOneAndUpdate(
+					{ creator: req.auth },
+					{ $pull: { tracks: req.body.track } },
+					{ new: true },
+				);
 			return res.status(201).json(tracksCollection);
 		} else
 			return res.status(401).json({
@@ -93,8 +106,18 @@ export const updateAritstsCollection = async (req, res) => {
 		if (req.auth) {
 			const aritst = await Collection.findOne({ creator: req.auth, artists: req.body.artist }).select("artists").exec();
 			let artistsCollection;
-			if (!aritst) artistsCollection = await Collection.findOneAndUpdate({ creator: req.auth }, { $push: { artists: req.body.artist } }, { new: true, upsert: true }).exec();
-			else artistsCollection = await Collection.findOneAndUpdate({ creator: req.auth }, { $pull: { artists: req.artist } }, { new: true });
+			if (!aritst)
+				artistsCollection = await Collection.findOneAndUpdate(
+					{ creator: req.auth },
+					{ $push: { artists: req.body.artist } },
+					{ new: true, upsert: true },
+				).exec();
+			else
+				artistsCollection = await Collection.findOneAndUpdate(
+					{ creator: req.auth },
+					{ $pull: { artists: req.artist } },
+					{ new: true },
+				);
 			return res.status(201).json(artistsCollection);
 		} else
 			return res.status(401).json({
@@ -111,8 +134,18 @@ export const updateAlbumsCollection = async (req, res) => {
 		if (req.auth) {
 			let albumsCollection;
 			const album = await Collection.findOne({ creator: req.auth, albums: req.body.album });
-			if (!album) albumsCollection = await Collection.findOneAndUpdate({ creator: req.auth }, { $push: { albums: req.body.album } }, { new: true, upsert: true }).exec();
-			else albumsCollection = await Collection.findOneAndUpdate({ creator: req.auth }, { $pull: { albums: req.body.album } }, { new: true });
+			if (!album)
+				albumsCollection = await Collection.findOneAndUpdate(
+					{ creator: req.auth },
+					{ $push: { albums: req.body.album } },
+					{ new: true, upsert: true },
+				).exec();
+			else
+				albumsCollection = await Collection.findOneAndUpdate(
+					{ creator: req.auth },
+					{ $pull: { albums: req.body.album } },
+					{ new: true },
+				);
 			return res.status(201).json(albumsCollection);
 		} else
 			return res.status(401).json({

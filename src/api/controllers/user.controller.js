@@ -106,7 +106,8 @@ export const register = async (req, res) => {
 			return res.status(500).json({
 				message: "Account already existed!",
 			});
-		const token = jwt.sign(req.body, process.env.SECRET_KEY, { expiresIn: "5m" });
+		const privateKey = readFileSync(path.resolve(path.join(__dirname, "../../keys/private.pem")));
+		const token = jwt.sign(req.body, privateKey, { algorithm: "RS256", expiresIn: "5m" });
 
 		await transporter.sendMail(
 			{
@@ -147,7 +148,8 @@ export const recoverPassword = async (req, res) => {
 			});
 		/* tạo token */
 		const verifyCode = Date.now().toString().substr(7, 6);
-		const token = jwt.sign({ verifyCode: verifyCode }, process.env.SECRET_KEY, { expiresIn: "5m" });
+		const privateKey = readFileSync(path.resolve(path.join(__dirname, "../../keys/private.pem")));
+		const token = jwt.sign({ verifyCode: verifyCode }, privateKey, { algorithm: "RS256", expiresIn: "5m" });
 
 		/* save token vào database */
 		user.token = token;
@@ -180,7 +182,8 @@ export const recoverPassword = async (req, res) => {
 export const resetPassword = async (req, res) => {
 	try {
 		const user = await User.findOne({ email: req.body.email }).exec();
-		const { verifyCode } = jwt.verify(user.token, process.env.SECRET_KEY);
+		const certification = readFileSync(path.resolve(path.join(__dirname, "../../keys/public.crt")));
+		const { verifyCode } = jwt.verify(user.token, certification, { algorithms: "RS256" });
 
 		/* check verify code gửi lên == verify code parse từ token lưu trong database  */
 		if (verifyCode === req.body.verifyCode) {
@@ -203,7 +206,9 @@ export const resetPassword = async (req, res) => {
 /* :::::::::::: Activate account :::::::::::::: */
 export const activateAccount = async (req, res) => {
 	try {
-		const decodedToken = jwt.verify(req.body.token, process.env.SECRET_KEY); // -> user data
+		const privateKey = readFileSync(path.resolve(path.join(__dirname, "../../keys/private.pem")));
+
+		const decodedToken = jwt.verify(req.body.token, privateKey, { algorithms: "RS256" }); // -> user data
 		if (!decodedToken) {
 			return res.status(401).json({
 				message: "Access token has been expired!",

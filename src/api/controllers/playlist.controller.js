@@ -13,14 +13,12 @@ export const list = async (req, res) => {
 		});
 	}
 };
-export const listPublicPlaylistsByUser = async (req, res) => {
+export const getPlaylistsByUser = async (req, res) => {
 	try {
-		const skip = req.query.skip || 0;
-		const limit = req.query.limit || 10;
 		const playlistsByUser = await Playlist.find({ creator: req.params.userId })
 			.populate({ path: "tracks", select: "thumbnail" })
-			.skip(skip)
-			.limit(limit)
+			.skip(req.query.skip || 0)
+			.limit(req.query.limit)
 			.exec();
 		return res.status(200).json(playlistsByUser);
 	} catch (error) {

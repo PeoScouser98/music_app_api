@@ -13,6 +13,7 @@ const playlistSchema = mongoose.Schema(
 			type: mongoose.Schema.Types.ObjectId,
 			require: true,
 			ref: "Users",
+			autopopulate: { select: "_id username" },
 		},
 		slug: { type: String, slug: "title", unique: true },
 		tracks: [
