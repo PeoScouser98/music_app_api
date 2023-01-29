@@ -3,11 +3,10 @@ import mongoose from "mongoose";
 
 const connectMongoDB = async () => {
 	try {
-		console.log(process.env.NODE_ENV + " " + "MODE");
+		console.log(process.env.NODE_ENV + "MODE");
 		const databaseUri = process.env.NODE_ENV.toUpperCase().includes("PRODUCTION")
 			? process.env.DATABASE_URI
 			: process.env.LOCAL_DATABASE_URI;
-		console.log(databaseUri);
 		mongoose.set("strictQuery", false);
 		await mongoose.connect(databaseUri);
 		console.log("Connected to database!");
