@@ -77,7 +77,7 @@ export const login = async (req, res) => {
 				message: "Incorrect password!",
 			});
 
-		const privateKey = readFileSync(path.resolve(path.join(__dirname, "../../keys/private.pem")));
+		const privateKey = readFileSync(path.resolve(path.join(__dirname, "../keys/private.pem")));
 		const accessToken = jwt.sign({ id: user._id }, privateKey, { algorithm: "RS256", expiresIn: "30s" });
 		/**
 		 * * sign(payload + secretKey) => token

@@ -6,7 +6,7 @@
 	"scripts": {
 		"build": "babel src -d build",
 		"serve": "node ./build/index.js",
-		"start": "npm run build && npm run serve",
+		"start": "nodemon ./src/index.js --exec babel-node -e js",
 		"dev": "SET NODE_ENV=DEVELOPMENT && nodemon ./src/index.js --exec babel-node -e js"
 	},
 	"repository": {

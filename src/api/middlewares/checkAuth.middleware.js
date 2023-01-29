@@ -10,7 +10,7 @@ export const checkAccessToken = async (req, res, next) => {
 		const accessToken = req.body.token || req.params.token || req.headers.token || req.query.token;
 		if (!accessToken) throw createHttpError.Unauthorized("Access token must be provided!");
 
-		const certification = await readFileSync(path.resolve(path.join(__dirname, "../../keys/public.crt")));
+		const certification = await readFileSync(path.resolve(path.join(__dirname, "../keys/public.crt")));
 		const { id } = jwt.verify(accessToken, certification, { algorithms: "RS256" }, function (error, payload) {
 			if (error) {
 				throw createHttpError.Unauthorized(error.message);
