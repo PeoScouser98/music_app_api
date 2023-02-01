@@ -7,6 +7,8 @@ import Collection from "../models/collection.model";
 import User from "../models/user.model";
 import { readFileSync } from "fs";
 import path from "path";
+
+const privateKey = readFileSync(path.resolve(path.join(__dirname, "../keys/private.pem")));
 /* ::::::::: Get all users ::::::::::::::: */
 export const list = async (req, res) => {
 	try {
@@ -47,11 +49,10 @@ export const getUser = async (req, res) => {
 /* :::::::::::::::::::: Tạo refresh token :::::::::::::::::::::: */
 export const refreshToken = async (req, res) => {
 	try {
-		const user = await User.findOne({ _id: req.params.userId }).select("-password").exec();
+		const user = await User.findOne({ _id: req.params.userId }).exec();
 		if (!user) throw createHttpError.BadRequest("Cannot find user");
-		const privateKey = readFileSync(path.resolve(path.join(__dirname, "../../keys/private.pem")));
-		const newAccessToken = jwt.sign({ id: user._id }, privateKey, { algorithm: "RS256", expiresIn: "5m" });
-
+		const newAccessToken = jwt.sign({ credential: user._id }, privateKey, { algorithm: "RS256", expiresIn: "15m" });
+		console.log(newAccessToken);
 		return res.status(200).json(newAccessToken);
 		/**
 		 * verify user
@@ -77,15 +78,10 @@ export const login = async (req, res) => {
 				message: "Incorrect password!",
 			});
 
-		const privateKey = readFileSync(path.resolve(path.join(__dirname, "../keys/private.pem")));
-		const accessToken = jwt.sign({ id: user._id }, privateKey, { algorithm: "RS256", expiresIn: "30s" });
-		/**
-		 * * sign(payload + secretKey) => token
-		 * * verify(token + secretKey) => payload
-		 *  */
+		const accessToken = jwt.sign({ credential: user._id }, privateKey, { algorithm: "RS256", expiresIn: "15m" });
 		user.password = undefined;
 		return res.status(200).json({
-			auth: user._id,
+			credential: user._id,
 			accessToken,
 		});
 	} catch (error) {
@@ -100,15 +96,14 @@ export const login = async (req, res) => {
 /* :::::::::::::::: Sign up ::::::::::::::::: */
 export const register = async (req, res) => {
 	try {
-		const BASE_URL = process.env.NODE_ENV.indexOf("PRODUCTION") >= 0 ? process.env.SERVER : process.env.LOCAL_SERVER;
 		const account = await User.findOne({ email: req.body.email }).exec();
 		if (account)
 			return res.status(500).json({
 				message: "Account already existed!",
 			});
-		const privateKey = readFileSync(path.resolve(path.join(__dirname, "../../keys/private.pem")));
 		const token = jwt.sign(req.body, privateKey, { algorithm: "RS256", expiresIn: "5m" });
-
+		const baseUrl = req.protocol + "://" + req.get("host") + "/activate-account";
+		console.log(baseUrl);
 		await transporter.sendMail(
 			{
 				from: process.env.AUTH_EMAIL,
@@ -116,7 +111,7 @@ export const register = async (req, res) => {
 				subject: "Activate your account",
 				html: /*html */ `
 					<h3>On clicking this link, you are goin' to activate account!</h3>
-					<p><a href=${BASE_URL}?token=${token}>Active Link</a></p>
+					<p><a href=${baseUrl}?token=${token}>Active Link</a></p>
 					<i>Thanks for register to be one of our member!</i>`,
 			},
 			(error, infor) => {
@@ -148,7 +143,6 @@ export const recoverPassword = async (req, res) => {
 			});
 		/* tạo token */
 		const verifyCode = Date.now().toString().substr(7, 6);
-		const privateKey = readFileSync(path.resolve(path.join(__dirname, "../../keys/private.pem")));
 		const token = jwt.sign({ verifyCode: verifyCode }, privateKey, { algorithm: "RS256", expiresIn: "5m" });
 
 		/* save token vào database */
@@ -206,8 +200,6 @@ export const resetPassword = async (req, res) => {
 /* :::::::::::: Activate account :::::::::::::: */
 export const activateAccount = async (req, res) => {
 	try {
-		const privateKey = readFileSync(path.resolve(path.join(__dirname, "../../keys/private.pem")));
-
 		const decodedToken = jwt.verify(req.body.token, privateKey, { algorithms: "RS256" }); // -> user data
 		if (!decodedToken) {
 			return res.status(401).json({

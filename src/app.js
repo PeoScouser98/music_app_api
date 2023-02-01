@@ -19,18 +19,18 @@ const app = express();
 /* :::::::::::::::::: Using Middlewares :::::::::::::::::: */
 app.use(cors({ origin: "*" })); // public API
 app.use(express.json()); // using JSON data type
-app.use(compression({ level: 6 })); // compress data if payload is too large
+app.use(compression({ level: 6, threshold: 1 * 1024 })); // compress data if payload is too large
 app.use(morgan("tiny"));
 
 /* :::::::::::::::::: Using Routers :::::::::::::::::::: */
 app.get("/", (req, res) => {
 	try {
-		res.json({
+		return res.json({
 			status: 200,
 			message: "Server now is running!",
 		});
 	} catch (error) {
-		res.status(404).send("Server is stopped!");
+		return res.status(404).send("Server is stopped!");
 	}
 });
 app.get("/activate-account", (req, res) => {

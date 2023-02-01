@@ -1,8 +1,6 @@
-const { initializeApp, applicationDefault } = require("firebase-admin/app");
+import admin from "firebase-admin";
+import serviceAccount from "./serviceAcount.json";
 
-const app = initializeApp({
-	credential: applicationDefault(),
-	projectId: "music-app-cdef5",
+admin.initializeApp({
+	credential: admin.credential.cert(serviceAccount),
 });
-
-export default app;

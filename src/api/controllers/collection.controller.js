@@ -28,7 +28,6 @@ export const getArtistsCollection = async (req, res) => {
 
 export const getTracksCollection = async (req, res) => {
 	try {
-		console.log(req.auth);
 		if (!req.auth) throw createHttpError.Unauthorized("Required signin!");
 		const { tracks } = await Collection.findOne({ creator: req.auth })
 			.populate({
@@ -39,7 +38,6 @@ export const getTracksCollection = async (req, res) => {
 			.select("-_id tracks")
 			.limit(req.query.limit || 10)
 			.exec();
-		console.log(tracks);
 		return res.status(200).json(tracks);
 	} catch (error) {
 		console.log(error);
@@ -72,31 +70,35 @@ export const getAlbumsCollection = async (req, res) => {
 /* ::::::::::::: Update Collection :::::::::::::::: */
 export const updateTracksCollection = async (req, res) => {
 	try {
-		console.log(req.auth);
+		console.log(req.body);
 		if (req.auth) {
-			const track = await Collection.findOne({ creator: req.auth, tracks: req.body.track }).select("tracks").exec();
-			console.log(track);
-			let tracksCollection;
-			if (!track)
-				tracksCollection = await Collection.findOneAndUpdate(
+			const collection = await Collection.findOne({
+				creator: req.auth,
+				tracks: req.body._id,
+			}).exec();
+
+			if (collection) {
+				const removedTrack = await Collection.findOneAndUpdate(
 					{ creator: req.auth },
-					{ $push: { tracks: req.body.track } },
-					{ new: true, upsert: true },
-				).exec();
-			else
-				tracksCollection = await Collection.findOneAndUpdate(
-					{ creator: req.auth },
-					{ $pull: { tracks: req.body.track } },
+					{ $pull: { tracks: req.body._id } },
 					{ new: true },
 				);
-			return res.status(201).json(tracksCollection);
+				return res.status(201).json(removedTrack);
+			}
+
+			const newTrack = await Collection.findOneAndUpdate(
+				{ creator: req.auth },
+				{ $addToSet: { tracks: req.body } },
+				{ new: true, upsert: true },
+			).exec();
+			return res.status(201).json(newTrack);
 		} else
 			return res.status(401).json({
 				message: "Require sign in!",
 			});
 	} catch (error) {
-		console.log(error);
-		return res.status(500).json({
+		console.log(error.message);
+		return res.status(400).json({
 			message: "Cannot update tracks collection!",
 		});
 	}

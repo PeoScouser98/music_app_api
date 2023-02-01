@@ -6,7 +6,8 @@ import Genre from "../models/genre.model";
 
 const search = async (req, res) => {
 	try {
-		const pattern = new RegExp(`^${req.body.keyword.toLowerCase()}`, "gi");
+		const keyword = req.query.keyword.toLowerCase();
+		const pattern = new RegExp(`^${keyword}`, "gi");
 		const artists = await Artist.find({ $or: [{ name: pattern }, { desc: pattern }] }).limit(3);
 		const albums = await Album.find({ $or: [{ title: pattern }, { artist: artists }] })
 			.populate({ path: "artist", select: "-wallpaper" })
