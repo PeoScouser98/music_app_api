@@ -24,7 +24,7 @@ const upload = multer({
 });
 
 router.get("/tracks", list);
-router.get("/tracks/user-uploaded/", checkAccessToken, listByUploader);
+router.get("/tracks/user-uploaded", checkAccessToken, listByUploader);
 router.get("/tracks/related/:genre", listRelatedTracks);
 router.get("/tracks/:id", read);
 router.post("/tracks", checkAccessToken, create);

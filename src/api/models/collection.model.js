@@ -11,7 +11,7 @@ const collectionSchema = mongoose.Schema(
 			{
 				type: mongoose.Schema.Types.ObjectId,
 				ref: "Artist",
-				autopopulate: { select: "_id name" },
+				autopopulate: true,
 			},
 		],
 		albums: [

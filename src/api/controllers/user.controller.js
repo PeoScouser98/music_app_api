@@ -9,6 +9,7 @@ import { readFileSync } from "fs";
 import path from "path";
 
 const privateKey = readFileSync(path.resolve(path.join(__dirname, "../keys/private.pem")));
+
 /* ::::::::: Get all users ::::::::::::::: */
 export const list = async (req, res) => {
 	try {
