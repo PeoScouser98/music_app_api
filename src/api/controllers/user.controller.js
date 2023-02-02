@@ -8,8 +8,10 @@ import User from "../models/user.model";
 import { readFileSync } from "fs";
 import path from "path";
 
-const privateKey = readFileSync(path.resolve(path.join(__dirname, "../keys/private.pem")));
+const privateKey = readFileSync(path.resolve("private.pem"));
+const certification = readFileSync(path.resolve("public.crt"));
 
+console.log(path.resolve("private.pem"));
 /* ::::::::: Get all users ::::::::::::::: */
 export const list = async (req, res) => {
 	try {
@@ -177,7 +179,7 @@ export const recoverPassword = async (req, res) => {
 export const resetPassword = async (req, res) => {
 	try {
 		const user = await User.findOne({ email: req.body.email }).exec();
-		const certification = readFileSync(path.resolve(path.join(__dirname, "../../keys/public.crt")));
+
 		const { verifyCode } = jwt.verify(user.token, certification, { algorithms: "RS256" });
 
 		/* check verify code gửi lên == verify code parse từ token lưu trong database  */
@@ -201,7 +203,7 @@ export const resetPassword = async (req, res) => {
 /* :::::::::::: Activate account :::::::::::::: */
 export const activateAccount = async (req, res) => {
 	try {
-		const decodedToken = jwt.verify(req.body.token, privateKey, { algorithms: "RS256" }); // -> user data
+		const decodedToken = jwt.verify(req.query.token, certification, { algorithms: "RS256" }); // -> user data
 		if (!decodedToken) {
 			return res.status(401).json({
 				message: "Access token has been expired!",

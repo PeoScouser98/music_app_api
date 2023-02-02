@@ -10,7 +10,7 @@ export const checkAccessToken = async (req, res, next) => {
 		const accessToken = req.headers.authorization.split(" ").at(1);
 		if (!accessToken) throw createHttpError.Unauthorized("Access token must be provided!");
 
-		const certification = await readFileSync(path.resolve(path.join(__dirname, "../keys/public.crt")));
+		const certification = await readFileSync(path.resolve("public.crt"));
 		const { credential } = jwt.verify(accessToken, certification, { algorithms: "RS256" });
 		const { role } = await User.findOne({ _id: credential }).select("role");
 		req.role = role;
