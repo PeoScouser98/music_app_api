@@ -1,17 +1,16 @@
 import bcrypt, { genSaltSync } from "bcrypt";
 import "dotenv/config";
+import { readFileSync } from "fs";
 import createHttpError from "http-errors";
 import jwt from "jsonwebtoken";
+import path from "path";
 import transporter from "../../app/mailer";
 import Collection from "../models/collection.model";
 import User from "../models/user.model";
-import { readFileSync } from "fs";
-import path from "path";
 
 const privateKey = readFileSync(path.resolve("private.pem"));
 const certification = readFileSync(path.resolve("public.crt"));
 
-console.log(path.resolve("private.pem"));
 /* ::::::::: Get all users ::::::::::::::: */
 export const list = async (req, res) => {
 	try {
@@ -100,13 +99,16 @@ export const login = async (req, res) => {
 export const register = async (req, res) => {
 	try {
 		const account = await User.findOne({ email: req.body.email }).exec();
-		if (account)
-			return res.status(500).json({
-				message: "Account already existed!",
-			});
+		if (account) throw createHttpError.BadRequest("Account already existed!");
+		// return res.status(200).json({
+		// 	status: 400,
+		// 	message: "Account already existed!",
+		// });
+
 		const token = jwt.sign(req.body, privateKey, { algorithm: "RS256", expiresIn: "5m" });
+
 		const baseUrl = req.protocol + "://" + req.get("host") + "/activate-account";
-		console.log(baseUrl);
+
 		await transporter.sendMail(
 			{
 				from: process.env.AUTH_EMAIL,
@@ -122,16 +124,16 @@ export const register = async (req, res) => {
 					return res.status(500).json({
 						message: error,
 					});
-				else
-					return res.status(202).json({
-						message: `Email sent: ${infor.response}`,
-					});
+
+				return res.status(202).json({
+					message: `Email sent: ${infor.response}`,
+				});
 			},
 		);
 	} catch (error) {
-		return res.status(500).json({
-			message: "Faild to register",
-			error: error,
+		return res.status(200).json({
+			message: error.message,
+			status: error.status,
 		});
 	}
 };
@@ -142,16 +144,14 @@ export const recoverPassword = async (req, res) => {
 		const user = await User.findOne({ email: req.body.email }).exec();
 		if (!user)
 			return res.status(404).json({
-				message: "Email không tồn tại!",
+				message: "Email does not exist!",
 			});
 		/* tạo token */
 		const verifyCode = Date.now().toString().substr(7, 6);
-		const token = jwt.sign({ verifyCode: verifyCode }, privateKey, { algorithm: "RS256", expiresIn: "5m" });
-
-		/* save token vào database */
-		user.token = token;
-		await User.findOneAndUpdate({ _id: user.id }, user, { new: true });
-
+		const token = jwt.sign({ verifyCode: verifyCode, email: user.email }, privateKey, {
+			algorithm: "RS256",
+			expiresIn: "5m",
+		});
 		/* gửi mã xác thực về mail cho user */
 		await transporter.sendMail(
 			{
@@ -165,10 +165,7 @@ export const recoverPassword = async (req, res) => {
 			},
 		);
 		/* ::::::::::::: finish recover password :::::::::::::::: */
-		return res.status(201).json({
-			verifyCode,
-			token,
-		});
+		return res.status(201).json({ token: token });
 	} catch (error) {
 		console.log(error);
 		return res.status(500).json(error);
@@ -178,25 +175,25 @@ export const recoverPassword = async (req, res) => {
 /* ::::::::::::::::::: Reset password :::::::::::::::::::: */
 export const resetPassword = async (req, res) => {
 	try {
-		const user = await User.findOne({ email: req.body.email }).exec();
+		const token = req.headers.authorization.split(" ").at(1);
+		const { verifyCode, email } = jwt.verify(token, certification, { algorithms: "RS256" });
+		console.log(email);
+		console.log(req.body.verifyCode);
+		const user = await User.findOne({ email: email }).exec();
+		if (verifyCode !== req.body.verifyCode || user === null) throw createHttpError.Forbidden("Verify code is invalid!");
 
-		const { verifyCode } = jwt.verify(user.token, certification, { algorithms: "RS256" });
+		const newPassword = bcrypt.hashSync(req.body.password, genSaltSync(10));
+		await User.findOneAndUpdate({ email: req.body.email }, { password: newPassword }, { new: true });
 
-		/* check verify code gửi lên == verify code parse từ token lưu trong database  */
-		if (verifyCode === req.body.verifyCode) {
-			const newPassword = bcrypt.hashSync(req.body.password, genSaltSync(10));
-			await User.findOneAndUpdate({ email: req.body.email }, { password: newPassword, token: "" }, { new: true });
-
-			return res.status(201).json({
-				message: "Reset password successfully!",
-			});
-		} else
-			return res.status(401).json({
-				message: "Invalid verification code!",
-			});
+		return res.status(201).json({
+			message: "Reset password successfully!",
+		});
 	} catch (error) {
-		console.log(error);
-		return res.status(500).json(error);
+		console.log(error.message);
+		return res.status(200).json({
+			status: error.status,
+			message: error.message,
+		});
 	}
 };
 
@@ -204,11 +201,6 @@ export const resetPassword = async (req, res) => {
 export const activateAccount = async (req, res) => {
 	try {
 		const decodedToken = jwt.verify(req.query.token, certification, { algorithms: "RS256" }); // -> user data
-		if (!decodedToken) {
-			return res.status(401).json({
-				message: "Access token has been expired!",
-			});
-		}
 		/* Save account to database */
 		const newAccount = await new User(decodedToken).save();
 		await new Collection({
@@ -225,8 +217,9 @@ export const activateAccount = async (req, res) => {
 			role: newAccount.role,
 		});
 	} catch (error) {
+		console.log(error.message);
 		return res.status(401).json({
-			message: "jwt has expired!",
+			message: error.message,
 		});
 	}
 };

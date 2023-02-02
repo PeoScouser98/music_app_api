@@ -34,7 +34,7 @@ app.get("/", (req, res) => {
 	}
 });
 app.get("/activate-account", (req, res) => {
-	res.sendFile(path.resolve(__dirname, "./views/verify-account.html"));
+	return res.sendFile(path.resolve("verify-account.html"));
 });
 
 app.use("/api", trackRouter);

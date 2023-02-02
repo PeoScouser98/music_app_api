@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dracula">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<link href="https://cdn.jsdelivr.net/npm/daisyui@2.50.0/dist/full.css" rel="stylesheet" type="text/css" />
+		<script src="https://cdn.tailwindcss.com"></script>
+	</head>
+	<body>
+		<div class="hero min-h-screen">
+			<div class="hero-content text-center text-neutral-content">
+				<div class="max-w-6xl">
+					<img
+						src="https://lh3.googleusercontent.com/ABwxVKJQP3l6WWYS_f-RfoNqwwUoWbigOtVzn-KACOc7qTUpORSrTJfHN71eRLxWAxQ0ethC5NixM4WYedtDasa8N1-TJOYcEO1_ipH2tJJP4px3gmKita6XPEKiEdGp_4r1_rq7nZEAJSDSG1CHGDX_3FqZuY7G2DI1_G2DBkG-lKxxbeLNG44NKm9GQBdF1pWJwQNVmztM197xj7TF4NCCYoYL_Jy7D2wgEAMvqUW6c3Ojl20dNHsIDVOwMzNDXumzEDEHCDjN6PTfHcW3tmiSTAJB_n8rsOQYEIDr4RTY0FHxzakAfjJRbRryp_JPSNzZr7v2rnN39pKQQILcD3FBBJMYRx0ooCciuvszP2c_GgrAG9uvrqu7tGVyhnEcMCKy4PII6T34NTJeBD87grO2kSmXctmgQoRkKYA9rlbEmCr9yu2qGyWaONy5ij2ANCbgk4CJZS95sKDm8BhgNiCAPsicScqT2UIG6ystOrf9RdN1rLGjWjSch_vrBqpbYygbpRYg881zeCVBrcHt6ylwuDt5uDhv9rYF7DMyCss9-1_Uju4ZY6qvHMMhmXf7b3l0rjdjGvCSZz3oPdHxT2AblbDjo9oNmYK3cwXSwQw34cuXc48Ufk5yLas8odk_60AJrFSHP_oZqlveQW9JcQ_6w9PivwKv2GXwPqnxKbCYGrCthxJ8-MQvVk1tIexQJHX1LgC-zcd9KQQSu98Abyj5ewdi7tOy18stvyT9xocXxuOclWCzmYToGwwLpq2vT9_MBL52Jg1afkGImn4tcHnYp-6RvnOlZxc3JE3rxKk48LviOihFViFANbkNbr4FcSHMoWf5gqngm4ckik0SyamlNrekaEw0j6IPWZQ5KSj67vC7jGZcLh_wIcbJwp0HT7PkZ4qaC5S-DhaMYNF1j6st_RSfgPgAQ1-4756TlwlNS44=w691-h366-no?authuser=0"
+						alt=""
+					/>
+					<h1 class="mb-10 text-4xl font-bold">Your account has been activated!</h1>
+					<button class="btn btn-success btn-wide" onclick="window.close()">Ok</button>
+				</div>
+			</div>
+		</div>
+		<script>
+			(async () => {
+				try {
+					const token = new URLSearchParams(location.search).get("token");
+					console.log(token);
+					const url = location.origin + `/api/activate-account?token=${token}`;
+					const response = await fetch(url);
+					console.log(response);
+				} catch (error) {
+					console.log(error);
+				}
+			})();
+		</script>
+	</body>
+</html>

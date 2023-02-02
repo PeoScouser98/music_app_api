@@ -19,7 +19,7 @@ router.get("/user", checkAccessToken, getUser);
 router.get("/refresh-token/:userId", refreshToken);
 router.post("/login", login);
 router.post("/register", register);
-router.post("/activate-account", activateAccount);
+router.get("/activate-account", activateAccount);
 router.post("/forgot-password", recoverPassword);
 router.post("/reset-password", resetPassword);
 router.patch("/user", checkAccessToken, update);
