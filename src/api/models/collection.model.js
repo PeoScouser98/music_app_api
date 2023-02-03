@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import mongooseAutoPopulate from "mongoose-autopopulate";
+
 const collectionSchema = mongoose.Schema(
 	{
 		creator: {

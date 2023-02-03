@@ -59,12 +59,14 @@ export const updateTracksCollection = async (req, res) => {
 	try {
 		if (!req.auth) throw createHttpError.Unauthorized("Require signin!");
 
-		const collection = await Collection.findOne({
+		const tracks = await Collection.findOne({
 			creator: req.auth,
 			tracks: req.body._id,
-		}).exec();
+		})
+			.select("tracks")
+			.exec();
 
-		if (collection) {
+		if (tracks) {
 			const removedTrack = await Collection.findOneAndUpdate(
 				{ creator: req.auth },
 				{ $pull: { tracks: req.body._id } },
@@ -92,23 +94,26 @@ export const updateAritstsCollection = async (req, res) => {
 		if (!req.auth) throw createHttpError.Unauthorized("Require signin!");
 
 		const aritst = await Collection.findOne({ creator: req.auth, artists: req.body.artist }).select("artists").exec();
-		let artistsCollection;
-		if (!aritst)
-			artistsCollection = await Collection.findOneAndUpdate(
+
+		if (!aritst) {
+			const followedArtist = await Collection.findOneAndUpdate(
 				{ creator: req.auth },
-				{ $push: { artists: req.body.artist } },
+				{ $addToSet: { artists: req.body.artist } },
 				{ new: true, upsert: true },
 			).exec();
-		else
-			artistsCollection = await Collection.findOneAndUpdate(
-				{ creator: req.auth },
-				{ $pull: { artists: req.artist } },
-				{ new: true },
-			);
-		return res.status(201).json(artistsCollection);
+			return res.status(201).json(followedArtist);
+		}
+
+		const unfollowedArtist = await Collection.findOneAndUpdate(
+			{ creator: req.auth },
+			{ $pull: { artists: req.artist } },
+			{ new: true },
+		);
+		return res.status(201).json(unfollowedArtist);
 	} catch (error) {
-		return res.status(500).json({
-			message: "Cannot update artists collection !",
+		return res.status(200).json({
+			status: error.status,
+			message: error.message,
 		});
 	}
 };
@@ -116,24 +121,26 @@ export const updateAlbumsCollection = async (req, res) => {
 	try {
 		if (!req.auth) throw createHttpError.Unauthorized("Require signin!");
 
-		let albumsCollection;
-		const album = await Collection.findOne({ creator: req.auth, albums: req.body.album });
-		if (!album)
-			albumsCollection = await Collection.findOneAndUpdate(
+		const albums = await Collection.findOne({ creator: req.auth, albums: req.body._id }).select("albums").exec();
+		if (!albums) {
+			const newAlbum = await Collection.findOneAndUpdate(
 				{ creator: req.auth },
-				{ $push: { albums: req.body.album } },
+				{ $addToSet: { albums: req.body._id } },
 				{ new: true, upsert: true },
 			).exec();
-		else
-			albumsCollection = await Collection.findOneAndUpdate(
-				{ creator: req.auth },
-				{ $pull: { albums: req.body.album } },
-				{ new: true },
-			);
-		return res.status(201).json(albumsCollection);
+			return res.status(201).json(newAlbum);
+		}
+
+		const removedAlbum = await Collection.findOneAndUpdate(
+			{ creator: req.auth },
+			{ $pull: { albums: req.body._id } },
+			{ new: true },
+		);
+		return res.status(201).json(removedAlbum);
 	} catch (error) {
-		return res.status(500).json({
-			message: "Cannot update albums collection!",
+		return res.status(200).json({
+			status: error.status,
+			message: error.message,
 		});
 	}
 };

@@ -1,3 +1,4 @@
+import createHttpError from "http-errors";
 import Playlist from "../models/playlist.model";
 
 export const list = async (req, res) => {
@@ -56,6 +57,7 @@ export const read = async (req, res) => {
 export const create = async (req, res) => {
 	try {
 		const newPlaylist = await new Playlist({ creator: req.auth, ...req.body }).save();
+		console.log(req.body);
 		return res.status(201).json(newPlaylist);
 	} catch (error) {
 		res.status(500).json({
@@ -64,46 +66,48 @@ export const create = async (req, res) => {
 	}
 };
 
-export const update = async (req, res) => {
+export const updateTracksList = async (req, res) => {
 	try {
-		let updatedPlaylist;
-		if (req.body.track) {
-			const playlistHasThisTrack = await Playlist.findOne({ _id: req.params.id, tracks: req.body.track }).exec();
-			console.log(playlistHasThisTrack);
-			if (!playlistHasThisTrack) {
-				updatedPlaylist = await Playlist.findOneAndUpdate(
-					{ _id: req.params.id },
-					{ $push: { tracks: req.body.track } },
-					{ new: true },
-				);
-				return res.status(201).json(updatedPlaylist);
-			} else {
-				updatedPlaylist = await Playlist.findOneAndUpdate(
-					{ _id: req.params.id },
-					{ $pull: { tracks: req.body.track } },
-					{ new: true, upsert: true },
-				);
-				return res.status(201).json(updatedPlaylist);
-			}
+		if (!req.body) throw createHttpError.BadRequest("Invalid track data!");
+
+		const playlistHasThisTrack = await Playlist.findOne({ _id: req.params.id, tracks: req.body.track }).exec();
+
+		if (!playlistHasThisTrack) {
+			const afterAdded = await Playlist.findOneAndUpdate(
+				{ _id: req.params.id },
+				{ $addToSet: { tracks: req.body.track } },
+				{ new: true },
+			);
+			return res.status(201).json(afterAdded);
 		}
 
-		updatedPlaylist = await Playlist.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true }).exec();
-		return res.status(201).json(updatedPlaylist);
+		const afterRemoved = await Playlist.findOneAndUpdate(
+			{ _id: req.params.id },
+			{ $pull: { tracks: req.body.track } },
+			{ new: true, upsert: true },
+		);
+		return res.status(201).json(afterRemoved);
 	} catch (error) {
-		console.log(error);
-		res.status(500).json({
-			message: "Failed to update playlist!",
+		console.log(error.message);
+		res.status(200).json({
+			message: error.message,
+			status: error.status,
 		});
 	}
 };
 
-export const del = async (req, res) => {
+export const deletePlaylist = async (req, res) => {
 	try {
-		const deletedPlaylist = await Playlist.findOneAndDelete({ _id: req.params.id }).exec();
+		if (!req.auth) throw createHttpError("You cannot delete this playlist!");
+		console.log(req.auth);
+		const deletedPlaylist = await Playlist.findOneAndDelete({ creator: req.auth, _id: req.params.id }).exec();
+		if (!deletedPlaylist) throw createHttpError("You cannot delete this playlist!");
+
 		return res.status(204).json(deletedPlaylist);
 	} catch (error) {
-		res.status(500).json({
-			message: "Failed to delete playlist!",
+		res.status(200).json({
+			status: error.status,
+			message: error.message,
 		});
 	}
 };

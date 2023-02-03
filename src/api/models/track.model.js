@@ -13,7 +13,7 @@ const trackSchema = mongoose.Schema(
 			{
 				type: mongoose.Schema.Types.ObjectId,
 				ref: "Artist",
-				autopopulate: { select: "_id name avatar" },
+				autopopulate: true,
 			},
 		],
 		genre: {

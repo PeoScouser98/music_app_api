@@ -4,3 +4,5 @@ import serviceAccount from "./serviceAcount.json";
 admin.initializeApp({
 	credential: admin.credential.cert(serviceAccount),
 });
+
+export default admin;
