@@ -75,10 +75,7 @@ export const login = async (req, res) => {
 	try {
 		const user = await User.findOne({ email: req.body.email }).exec();
 		if (!user) throw createHttpError.NotFound("Account does not exist");
-		if (!user.authenticate(req.body.password))
-			return res.status(401).json({
-				message: "Incorrect password!",
-			});
+		if (!user.authenticate(req.body.password)) throw createHttpError.BadRequest("Password is incorrect!");
 
 		const accessToken = jwt.sign({ credential: user._id }, privateKey, { algorithm: "RS256", expiresIn: "15m" });
 		user.password = undefined;
@@ -88,7 +85,7 @@ export const login = async (req, res) => {
 		});
 	} catch (error) {
 		console.error("[ERROR]", error.message);
-		return res.status(500).json({
+		return res.status(200).json({
 			message: error.message,
 			status: error.status,
 		});
@@ -177,14 +174,13 @@ export const resetPassword = async (req, res) => {
 	try {
 		const token = req.headers.authorization.split(" ").at(1);
 		const { verifyCode, email } = jwt.verify(token, certification, { algorithms: "RS256" });
-		console.log(email);
-		console.log(req.body.verifyCode);
+
 		const user = await User.findOne({ email: email }).exec();
 		if (verifyCode !== req.body.verifyCode || user === null) throw createHttpError.Forbidden("Verify code is invalid!");
 
 		const newPassword = bcrypt.hashSync(req.body.password, genSaltSync(10));
-		await User.findOneAndUpdate({ email: req.body.email }, { password: newPassword }, { new: true });
-
+		const response = await User.findOneAndUpdate({ email: email }, { password: newPassword }, { new: true });
+		if (!response) throw createHttpError.InternalServerError("Failed to reset password");
 		return res.status(201).json({
 			message: "Reset password successfully!",
 		});
