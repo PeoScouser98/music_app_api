@@ -30,7 +30,9 @@ const trackSchema = mongoose.Schema(
 			type: String,
 			require: true,
 		},
-
+		thumbnail: {
+			type: String,
+		},
 		trackSrc: {
 			type: String,
 		},
@@ -58,20 +60,21 @@ const trackSchema = mongoose.Schema(
 	},
 );
 
-trackSchema.pre("save", function (next) {
-	this.trackSrc = `https://docs.google.com/uc?export=download&id=${this.fileId}`;
-	this.downloadUrl = `https://drive.google.com/uc?authuser=0&id=${this.fileId}&export=download`;
-	next();
-});
-trackSchema.pre("find", function (next) {
-	if (this.slug === "") this.slug = this.title.split(" ").join("-");
-	next();
-});
-trackSchema.virtual("thumbnail").get(function () {
+// trackSchema.pre("save", function (next) {
+// 	this.trackSrc = `https://docs.google.com/uc?export=download&id=${this.fileId}`;
+// 	this.downloadUrl = `https://drive.google.com/uc?authuser=0&id=${this.fileId}&export=download`;
+// 	next();
+// });
+// trackSchema.pre("find", function (next) {
+// 	if (this.slug === "") this.slug = this.title.split(" ").join("-");
+// 	next();
+// });
+
+trackSchema.virtual("alternativeThumbnail").get(function () {
 	try {
 		return this.album.image;
 	} catch (error) {
-		return this.artists[0].avatar || "/images/default-thumbnail.png";
+		return this.artists.length > 0 ? this.artists.at(0).avatar : "/images/default-thumbnail.png";
 	}
 });
 

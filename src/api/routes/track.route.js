@@ -29,11 +29,11 @@ router.get("/tracks/related/:genre", listRelatedTracks);
 router.get("/tracks/:id", read);
 router.post("/tracks", checkAccessToken, create);
 router.patch("/tracks/:id", checkAccessToken, update);
-router.patch("/tracks/:id", checkAccessToken, update);
 router.delete("/tracks/:id", checkAccessToken, del);
-router.post("/track-upload", checkAccessToken, upload.single("trackSrc"), async (req, res) => {
-	const trackSrc = await uploadFile(req.file, process.env.MUSIC_DIR);
-	return res.status(202).json(trackSrc.data); // Accepted! -> return file id and then call API to create new song with file id
-});
+
+// router.post("/track-upload", checkAccessToken, upload.single("trackSrc"), async (req, res) => {
+// 	const trackSrc = await uploadFile(req.file, process.env.MUSIC_DIR);
+// 	return res.status(202).json(trackSrc.data); // Accepted! -> return file id and then call API to create new song with file id
+// });
 
 export default router;

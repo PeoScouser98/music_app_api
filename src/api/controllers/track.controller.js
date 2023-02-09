@@ -2,6 +2,7 @@ import Track from "../models/track.model";
 import Comment from "../models/comment.model";
 import deleteFile from "../../app/drive-upload";
 import Genre from "../models/genre.model";
+import createHttpError from "http-errors";
 // lấy ra tất cả bài hát
 export const list = async (req, res) => {
 	try {
@@ -76,12 +77,16 @@ export const read = async (req, res) => {
 // upload bài hát
 export const create = async (req, res) => {
 	try {
+		if (!req.auth) throw createHttpError.Forbidden("You have to login to upload track!");
 		req.body.uploader = req.auth;
+		console.log(req.body);
 		const newTrack = await new Track(req.body).save();
 		return res.status(201).json(newTrack);
 	} catch (error) {
-		return res.status(400).json({
-			message: "Cannot create new track!",
+		console.log("[ERROR] :>>>", error.message);
+		return res.status(error.status || 500).json({
+			status: error.status,
+			message: error.message,
 		});
 	}
 };

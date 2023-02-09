@@ -89,6 +89,7 @@ export const updateTracksCollection = async (req, res) => {
 		});
 	}
 };
+
 export const updateAritstsCollection = async (req, res) => {
 	try {
 		if (!req.auth) throw createHttpError.Unauthorized("Require signin!");
@@ -117,6 +118,7 @@ export const updateAritstsCollection = async (req, res) => {
 		});
 	}
 };
+
 export const updateAlbumsCollection = async (req, res) => {
 	try {
 		if (!req.auth) throw createHttpError.Unauthorized("Require signin!");
