@@ -106,7 +106,7 @@ export const register = async (req, res) => {
         const token = jwt.sign(req.body, privateKey, { algorithm: "RS256", expiresIn: "5m" });
 
         const baseUrl = req.protocol + "://" + req.get("host") + "/activate-account";
-
+        console.log(req.get("host"));
         await transporter.sendMail(
             {
                 from: process.env.AUTH_EMAIL,
