@@ -81,7 +81,7 @@ export const login = async (req, res) => {
         user.password = undefined;
         return res.status(200).json({
             credential: user._id,
-            accessToken,
+            accessToken: accessToken,
             status: 200,
         });
     } catch (error) {
