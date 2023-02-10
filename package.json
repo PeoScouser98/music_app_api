@@ -21,6 +21,7 @@
     },
     "homepage": "https://github.com/PeoScouser98/music_app_api",
     "dependencies": {
+        "babel-plugin-transform-runtime": "^6.23.0",
         "@vercel/node": "^2.5.11",
         "bcrypt": "^5.1.0",
         "compression": "^1.7.4",
@@ -48,7 +49,6 @@
     "devDependencies": {
         "babel-cli": "^6.26.0",
         "babel-loader": "^9.1.2",
-        "babel-plugin-transform-runtime": "^6.23.0",
         "babel-polyfill": "^6.26.0",
         "babel-preset-env": "^1.7.0",
         "babel-preset-stage-0": "^6.24.1",
