@@ -7,7 +7,7 @@ import User from "../models/user.model";
 
 export const checkAccessToken = async (req, res, next) => {
     try {
-        if (!accessToken) throw createHttpError.Unauthorized("Access token must be provided!");
+        if (!req.headers.authorization) throw createHttpError.Unauthorized("Access token must be provided!");
         const accessToken = req.headers.authorization.split(" ").at(1);
 
         const certification = await readFileSync(path.resolve("public.crt"));

@@ -6,7 +6,8 @@
     "scripts": {
         "webpack": "npx webpack --config webpack.config.js",
         "build": "rm -rf build && babel src -d build",
-        "start": "node ./build/index.js",
+        "serve": "node ./build/index.js",
+        "start": "npm run build && npm run serve",
         "dev": "SET NODE_ENV=DEVELOPMENT && nodemon ./src/index.js --exec babel-node -e js"
     },
     "repository": {
