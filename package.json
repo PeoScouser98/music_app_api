@@ -4,10 +4,10 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "webpack": "npx webpack --config webpack.config.js",
-        "build": "rm -rf build && babel src -d build",
-        "serve": "node ./build/index.js",
-        "start": "npm run build && npm run serve",
+        "clean": "rmdir /s /q dist && rm -rf build ",
+        "webpack": "webpack --mode development --config webpack.config.js",
+        "build": "npx babel src -d build",
+        "start": "node ./build/index.js",
         "dev": "SET NODE_ENV=DEVELOPMENT && nodemon ./src/index.js --exec babel-node -e js"
     },
     "repository": {
@@ -22,8 +22,10 @@
     },
     "homepage": "https://github.com/PeoScouser98/music_app_api",
     "dependencies": {
-        "babel-plugin-transform-runtime": "^6.23.0",
+        "@babel/polyfill": "^7.12.1",
         "@vercel/node": "^2.5.11",
+        "babel-plugin-dynamic-import-node": "^2.3.3",
+        "babel-plugin-transform-runtime": "^6.23.0",
         "bcrypt": "^5.1.0",
         "compression": "^1.7.4",
         "cookie-parser": "^1.4.6",
@@ -48,11 +50,12 @@
         "socket.io": "^4.5.3"
     },
     "devDependencies": {
-        "babel-cli": "^6.26.0",
+        "@babel/cli": "^7.20.7",
+        "@babel/core": "^7.20.12",
+        "@babel/node": "^7.20.7",
+        "@babel/preset-env": "^7.20.2",
+        "@babel/preset-stage-0": "^7.8.3",
         "babel-loader": "^9.1.2",
-        "babel-polyfill": "^6.26.0",
-        "babel-preset-env": "^1.7.0",
-        "babel-preset-stage-0": "^6.24.1",
         "html-webpack-plugin": "^5.5.0",
         "nodemon": "^2.0.20",
         "webpack": "^5.75.0",

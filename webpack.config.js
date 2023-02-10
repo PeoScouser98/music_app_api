@@ -1,7 +1,9 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 module.exports = {
-    entry: "./build/index.js",
+    entry: "./src/index.js",
+    mode: "development",
+    target: "node",
     output: {
         path: path.join(__dirname, "dist"),
         filename: "bundle.js",
@@ -13,15 +15,13 @@ module.exports = {
                 exclude: /node_modules/,
                 use: {
                     loader: "babel-loader",
+                    options: {
+                        presets: ["@babel/preset-env"],
+                    },
                 },
             },
         ],
     },
-    plugins: [
-        new HtmlWebpackPlugin({
-            template: "./verify-account.html",
-            filename: "./verify-account.html",
-        }),
-    ],
-    devtool: "eval",
+
+    devtool: false,
 };
