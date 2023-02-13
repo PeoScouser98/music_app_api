@@ -2,7 +2,6 @@ const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 module.exports = {
     entry: "./src/index.js",
-    mode: "development",
     target: "node",
     output: {
         path: path.join(__dirname, "dist"),
@@ -22,6 +21,12 @@ module.exports = {
             },
         ],
     },
-
+    externals: [
+        {
+            nock: "commonjs2 nock",
+            "mock-aws-s3": "commonjs2 mock-aws-s3",
+            "node-pre-gyp": "node-pre-gyp",
+        },
+    ],
     devtool: false,
 };
