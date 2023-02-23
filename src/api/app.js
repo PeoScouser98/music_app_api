@@ -4,14 +4,14 @@ import cors from "cors";
 import path from "path";
 import compression from "compression";
 /* :::::::::::::::::: Import Routers :::::::::::::::::: */
-import trackRouter from "./api/routes/track.route";
-import userRouter from "./api/routes/user.route";
-import artistRouter from "./api/routes/artist.route";
-import genreRouter from "./api/routes/genre.route";
-import playListRouter from "./api/routes/playlist.route";
-import albumRouter from "./api/routes/album.route";
-import collectionRouter from "./api/routes/collection.route";
-import searchRouter from "./api/routes/search.route";
+import trackRouter from "./routes/track.route";
+import userRouter from "./routes/user.route";
+import artistRouter from "./routes/artist.route";
+import genreRouter from "./routes/genre.route";
+import playListRouter from "./routes/playlist.route";
+import albumRouter from "./routes/album.route";
+import collectionRouter from "./routes/collection.route";
+import searchRouter from "./routes/search.route";
 import morgan from "morgan";
 
 const app = express();

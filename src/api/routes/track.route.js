@@ -1,18 +1,8 @@
 import express from "express";
 import multer from "multer";
-import {
-	list,
-	read,
-	create,
-	update,
-	del,
-	listByUploader,
-	searchTrack,
-	listRelatedTracks,
-} from "../controllers/track.controller";
-import { isAdmin, checkAccessToken } from "../middlewares/checkAuth.middleware";
+import { create, del, list, listByUploader, listRelatedTracks, read, update } from "../controllers/track.controller";
+import { checkAccessToken } from "../middlewares/checkAuth.middleware";
 import { checkAudioFileExtension } from "../middlewares/checkFile.middleware";
-import { uploadFile, deleteFile } from "../../app/drive-upload";
 
 const router = express.Router();
 

@@ -1,6 +1,6 @@
 import Track from "../models/track.model";
 import Comment from "../models/comment.model";
-import deleteFile from "../../app/drive-upload";
+import { deleteFile } from "../../app/drive-upload";
 import Genre from "../models/genre.model";
 import createHttpError from "http-errors";
 // lấy ra tất cả bài hát
