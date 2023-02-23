@@ -1,15 +1,10 @@
 import bcrypt, { genSaltSync } from "bcrypt";
 import "dotenv/config";
-import { readFileSync } from "fs";
 import createHttpError from "http-errors";
 import jwt from "jsonwebtoken";
-import path from "path";
 import transporter from "../../app/mailer";
 import Collection from "../models/collection.model";
 import User from "../models/user.model";
-
-const privateKey = readFileSync(path.resolve("private.pem"));
-const certification = readFileSync(path.resolve("public.crt"));
 
 /* ::::::::: Get all users ::::::::::::::: */
 export const list = async (req, res) => {
@@ -53,7 +48,7 @@ export const refreshToken = async (req, res) => {
 	try {
 		const user = await User.findOne({ _id: req.params.userId }).exec();
 		if (!user) throw createHttpError.BadRequest("Cannot find user");
-		const newAccessToken = jwt.sign({ credential: user._id }, privateKey, { algorithm: "RS256", expiresIn: "15m" });
+		const newAccessToken = jwt.sign({ credential: user._id }, process.env.SECRET_KEY, { expiresIn: "15m" });
 		console.log(newAccessToken);
 		return res.status(200).json(newAccessToken);
 		/**
@@ -77,7 +72,7 @@ export const login = async (req, res) => {
 		if (!user) throw createHttpError.NotFound("Account does not exist");
 		if (!user.authenticate(req.body.password)) throw createHttpError.BadRequest("Password is incorrect!");
 
-		const accessToken = jwt.sign({ credential: user._id }, privateKey, { algorithm: "RS256", expiresIn: "15m" });
+		const accessToken = jwt.sign({ credential: user._id }, process.env.SECRET_KEY, { expiresIn: "15m" });
 		user.password = undefined;
 		return res.status(200).json({
 			credential: user._id,
@@ -103,7 +98,7 @@ export const register = async (req, res) => {
 		// 	message: "Account already existed!",
 		// });
 
-		const token = jwt.sign(req.body, privateKey, { algorithm: "RS256", expiresIn: "5m" });
+		const token = jwt.sign(req.body, process.env.SECRET_KEY, { expiresIn: "5m" });
 
 		const baseUrl = req.protocol + "://" + req.get("host") + "/activate-account";
 		console.log(req.get("host"));
@@ -146,8 +141,7 @@ export const recoverPassword = async (req, res) => {
 			});
 		/* tạo token */
 		const verifyCode = Date.now().toString().substr(7, 6);
-		const token = jwt.sign({ verifyCode: verifyCode, email: user.email }, privateKey, {
-			algorithm: "RS256",
+		const token = jwt.sign({ verifyCode: verifyCode, email: user.email }, process.env.SECRET_KEY, {
 			expiresIn: "5m",
 		});
 		/* gửi mã xác thực về mail cho user */
@@ -174,7 +168,7 @@ export const recoverPassword = async (req, res) => {
 export const resetPassword = async (req, res) => {
 	try {
 		const token = req.headers.authorization.split(" ").at(1);
-		const { verifyCode, email } = jwt.verify(token, certification, { algorithms: "RS256" });
+		const { verifyCode, email } = jwt.verify(token, process.env.SECRET_KEY, { algorithms: "RS256" });
 
 		const user = await User.findOne({ email: email }).exec();
 		if (verifyCode !== req.body.verifyCode || user === null) throw createHttpError.Forbidden("Verify code is invalid!");
@@ -197,7 +191,7 @@ export const resetPassword = async (req, res) => {
 /* :::::::::::: Activate account :::::::::::::: */
 export const activateAccount = async (req, res) => {
 	try {
-		const decodedToken = jwt.verify(req.query.token, certification, { algorithms: "RS256" }); // -> user data
+		const decodedToken = jwt.verify(req.query.token, process.env.SECRET_KEY, { algorithms: "RS256" }); // -> user data
 		/* Save account to database */
 		const newAccount = await new User(decodedToken).save();
 		await new Collection({
