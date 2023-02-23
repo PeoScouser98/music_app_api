@@ -1,61 +1,52 @@
 {
-    "name": "web_music",
-    "version": "1.0.0",
-    "description": "",
-    "main": "index.js",
-    "scripts": {
-        "cleanup": "rmdir /s /q dist && rm -rf build ",
-        "webpack": "webpack --mode development --config webpack.config.js",
-        "build": "npx babel src -d build",
-        "start": "node ./build/index.js",
-        "dev": "SET NODE_ENV=DEVELOPMENT && nodemon ./src/index.js --exec babel-node -e js"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/PeoScouser98/web_music.git"
-    },
-    "keywords": [],
-    "author": "",
-    "license": "ISC",
-    "bugs": {
-        "url": "https://github.com/PeoScouser98/web_music/issues"
-    },
-    "homepage": "https://github.com/PeoScouser98/music_app_api",
-    "dependencies": {
-        "npm": "^7.12.1",
-        "@vercel/node": "^2.5.11",
-        "bcrypt": "^5.1.0",
-        "compression": "^1.7.4",
-        "cookie-parser": "^1.4.6",
-        "cors": "^2.8.5",
-        "dotenv": "^16.0.1",
-        "express": "^4.18.1",
-        "firebase-admin": "^11.5.0",
-        "googleapis": "^107.0.0",
-        "heroku": "^7.67.1",
-        "http-errors": "^2.0.0",
-        "jsonwebtoken": "^8.5.1",
-        "mongoose": "^6.5.2",
-        "mongoose-autopopulate": "^0.17.1",
-        "mongoose-slug-generator": "^1.0.4",
-        "morgan": "^1.10.0",
-        "multer": "^1.4.5-lts.1",
-        "node-env-run": "^4.0.2",
-        "nodemailer": "^6.7.8",
-        "path": "^0.12.7",
-        "socket.io": "^4.5.3"
-    },
-    "devDependencies": {
-        "@babel/cli": "^7.20.7",
-        "@babel/core": "^7.20.12",
-        "@babel/node": "^7.20.7",
-        "@babel/preset-env": "^7.20.2",
-        "@babel/preset-stage-0": "^7.8.3",
-        "babel-loader": "^9.1.2",
-        "html-webpack-plugin": "^5.5.0",
-        "nodemon": "^2.0.20",
-        "webpack": "^5.75.0",
-        "webpack-cli": "^5.0.1",
-        "webpack-node-externals": "^3.0.0"
-    }
+	"name": "web_music",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"cleanup": "rm -rf dist",
+		"build": "npx webpack --config webpack.config.js",
+		"start": "SET NODE_ENV=PRODUCTION && node ./dist/bundle.js",
+		"dev": "SET NODE_ENV=DEVELOPMENT && nodemon ./src/index.js --exec babel-node -e js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/PeoScouser98/web_music.git"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/PeoScouser98/web_music/issues"
+	},
+	"homepage": "https://github.com/PeoScouser98/music_app_api",
+	"dependencies": {
+		"@vercel/node": "^2.5.11",
+		"bcrypt": "^5.1.0",
+		"compression": "^1.7.4",
+		"cors": "^2.8.5",
+		"dotenv": "^16.0.1",
+		"express": "^4.18.1",
+		"firebase-admin": "^11.5.0",
+		"googleapis": "^107.0.0",
+		"http-errors": "^2.0.0",
+		"jsonwebtoken": "^8.5.1",
+		"mongoose": "^6.5.2",
+		"mongoose-autopopulate": "^0.17.1",
+		"mongoose-slug-generator": "^1.0.4",
+		"morgan": "^1.10.0",
+		"multer": "^1.4.5-lts.1",
+		"nodemailer": "^6.7.8"
+	},
+	"devDependencies": {
+		"@babel/cli": "^7.20.7",
+		"@babel/core": "^7.20.12",
+		"@babel/node": "^7.20.7",
+		"@babel/preset-env": "^7.20.2",
+		"babel-loader": "^9.1.2",
+		"nodemon": "^2.0.20",
+		"terser-webpack-plugin": "^5.3.6",
+		"webpack": "^5.75.0",
+		"webpack-cli": "^5.0.1"
+	}
 }
