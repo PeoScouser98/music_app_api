@@ -30,9 +30,10 @@ app.get("/", (req, res) => {
 			message: "Server now is running!",
 		});
 	} catch (error) {
-		return res.status(404).send("Server is stopped!");
+		return res.status(500).send("Server is stopped!");
 	}
 });
+
 app.get("/activate-account", (req, res) => {
 	return res.sendFile(path.resolve("verify-account.html"));
 });
