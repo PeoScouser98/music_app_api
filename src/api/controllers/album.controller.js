@@ -16,9 +16,9 @@ export const list = async (req, res) => {
 
 export const read = async (req, res) => {
 	try {
-		const album = await Album.findOne({ _id: req.params.id }).exec();
-		const tracks = await Track.find({ album: req.params.id }).exec();
-
+		const _album = Album.findOne({ _id: req.params.id }).exec();
+		const _tracks = Track.find({ album: req.params.id }).exec();
+		const [tracks, album] = await Promise.all([_album, _tracks]);
 		return res.status(200).json({ album, tracks });
 	} catch (error) {
 		console.log(error.message);
@@ -42,7 +42,7 @@ export const create = async (req, res) => {
 
 export const del = async (req, res) => {
 	try {
-		const removedAlbum = await Album.findOneAndDelete({
+		const removedAlbum = await Album.deleteOne({
 			_id: req.params.id,
 		}).exec();
 		return res.status(204).json(removedAlbum);
@@ -55,7 +55,7 @@ export const del = async (req, res) => {
 
 export const update = async (req, res) => {
 	try {
-		const updatedAlbum = await Album.findOneAndUpdate({ _id: req.params.id }, req.body, {
+		const updatedAlbum = await Album.updateOne({ _id: req.params.id }, req.body, {
 			new: true,
 			upsert: true,
 		}).exec();
@@ -70,11 +70,7 @@ export const update = async (req, res) => {
 export const removeFromAlbum = async (req, res) => {
 	try {
 		console.log("remove object id: ", req.body.track);
-		const updatedAlbum = await Album.findOneAndUpdate(
-			{ _id: req.params.id },
-			{ $pull: { tracks: req.body.track } },
-			{ new: true, upsert: true },
-		).exec();
+		const updatedAlbum = await Album.updateOne({ _id: req.params.id }, { $pull: { tracks: req.body.track } }, { new: true, upsert: true }).exec();
 		return res.status(200).json(updatedAlbum.tracks);
 	} catch (error) {
 		console.log(error);

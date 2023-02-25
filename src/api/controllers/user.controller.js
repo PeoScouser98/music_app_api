@@ -218,7 +218,7 @@ export const activateAccount = async (req, res) => {
 export const update = async (req, res) => {
 	try {
 		console.log(req.body);
-		const updatedUser = await User.findOneAndUpdate({ _id: req.auth }, req.body, { new: true });
+		const updatedUser = await User.updateOne({ _id: req.auth }, req.body, { new: true });
 		console.log(updatedUser);
 		return res.status(201).json(updatedUser);
 	} catch (error) {

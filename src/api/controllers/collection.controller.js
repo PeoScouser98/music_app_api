@@ -58,29 +58,17 @@ export const getAlbumsCollection = async (req, res) => {
 export const updateTracksCollection = async (req, res) => {
 	try {
 		if (!req.auth) throw createHttpError.Unauthorized("Require signin!");
-
-		const tracks = await Collection.findOne({
-			creator: req.auth,
-			tracks: req.body._id,
+		const track = await Collection.findOne({
+			$and: [{ creator: req.auth }, { tracks: req.body._id }],
 		})
 			.select("tracks")
 			.exec();
-
-		if (tracks) {
-			const removedTrack = await Collection.findOneAndUpdate(
-				{ creator: req.auth },
-				{ $pull: { tracks: req.body._id } },
-				{ new: true },
-			);
+		if (track) {
+			const removedTrack = await Collection.updateOne({ creator: req.auth }, { $pull: { tracks: req.body._id } }, { new: true });
 			return res.status(201).json(removedTrack);
 		}
 
-		const newTrack = await Collection.findOneAndUpdate(
-			{ creator: req.auth },
-			{ $addToSet: { tracks: req.body } },
-			{ new: true, upsert: true },
-		).exec();
-
+		const newTrack = await Collection.updateOne({ creator: req.auth }, { $push: { tracks: req.body._id } }, { new: true, upsert: true }).exec();
 		return res.status(201).json(newTrack);
 	} catch (error) {
 		console.log(error.message);
@@ -97,7 +85,7 @@ export const updateAritstsCollection = async (req, res) => {
 		const aritst = await Collection.findOne({ creator: req.auth, artists: req.body.artist }).select("artists").exec();
 
 		if (!aritst) {
-			const followedArtist = await Collection.findOneAndUpdate(
+			const followedArtist = await Collection.updateOne(
 				{ creator: req.auth },
 				{ $addToSet: { artists: req.body.artist } },
 				{ new: true, upsert: true },
@@ -105,11 +93,7 @@ export const updateAritstsCollection = async (req, res) => {
 			return res.status(201).json(followedArtist);
 		}
 
-		const unfollowedArtist = await Collection.findOneAndUpdate(
-			{ creator: req.auth },
-			{ $pull: { artists: req.artist } },
-			{ new: true },
-		);
+		const unfollowedArtist = await Collection.updateOne({ creator: req.auth }, { $pull: { artists: req.artist } }, { new: true });
 		return res.status(201).json(unfollowedArtist);
 	} catch (error) {
 		return res.status(200).json({
@@ -125,19 +109,10 @@ export const updateAlbumsCollection = async (req, res) => {
 
 		const albums = await Collection.findOne({ creator: req.auth, albums: req.body._id }).select("albums").exec();
 		if (!albums) {
-			const newAlbum = await Collection.findOneAndUpdate(
-				{ creator: req.auth },
-				{ $addToSet: { albums: req.body._id } },
-				{ new: true, upsert: true },
-			).exec();
+			const newAlbum = await Collection.updateOne({ creator: req.auth }, { $addToSet: { albums: req.body._id } }, { new: true, upsert: true }).exec();
 			return res.status(201).json(newAlbum);
 		}
-
-		const removedAlbum = await Collection.findOneAndUpdate(
-			{ creator: req.auth },
-			{ $pull: { albums: req.body._id } },
-			{ new: true },
-		);
+		const removedAlbum = await Collection.updateOne({ creator: req.auth }, { $pull: { albums: req.body._id } }, { new: true });
 		return res.status(201).json(removedAlbum);
 	} catch (error) {
 		return res.status(200).json({

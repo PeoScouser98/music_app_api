@@ -48,11 +48,7 @@ export const update = async (req, res) => {
 	try {
 		let updatedArtist;
 		if (req.body.follower) {
-			updatedArtist = await Artist.findByIdAndUpdate(
-				{ _id: req.params.id },
-				{ $push: { followers: req.body.follower } },
-				{ new: true, upsert: true },
-			).exec();
+			updatedArtist = await Artist.updateOne({ _id: req.params.id }, { $push: { followers: req.body.follower } }, { new: true, upsert: true }).exec();
 			if (req.query.action == "unfollow")
 				updatedArtist = await Artist.findByIdAndUpdate(
 					{ _id: req.params.id },
@@ -72,7 +68,7 @@ export const update = async (req, res) => {
 
 export const del = async (req, res) => {
 	try {
-		const deletedArtist = await Artist.findOneAndDelete({ _id: req.params.id }).exec();
+		const deletedArtist = await Artist.deleteOne({ _id: req.params.id }).exec();
 		res.status(204).json(deletedArtist);
 	} catch (error) {
 		res.status(500).json({

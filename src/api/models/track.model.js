@@ -47,6 +47,7 @@ const trackSchema = mongoose.Schema(
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "User",
 		},
+		fileName: { type: String },
 		duration: {
 			type: Number,
 			require: true,

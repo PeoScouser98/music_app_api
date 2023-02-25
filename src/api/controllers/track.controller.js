@@ -41,9 +41,9 @@ export const listRelatedTracks = async (req, res) => {
 				console.log(data);
 				genre = data._id;
 			});
-		// console.log(genre);
+
 		const relatedTracks = await Track.find({ genre: genre }).limit(10).exec();
-		// console.log(relatedTracks);
+
 		return res.status(200).json(relatedTracks);
 	} catch (error) {
 		console.log(error.message);
@@ -93,7 +93,7 @@ export const create = async (req, res) => {
 
 export const update = async (req, res) => {
 	try {
-		const updatedTrack = await Track.findOneAndUpdate({ _id: req.params.id }, req.body, {
+		const updatedTrack = await Track.updateOne({ _id: req.params.id }, req.body, {
 			new: true,
 			upsert: true,
 		}).exec();
@@ -110,7 +110,7 @@ export const del = async (req, res) => {
 	try {
 		const { fileId } = await Track.findOne({ _id: req.params.id }).exec();
 		await deleteFile(fileId);
-		const deletedTrack = await Track.findOneAndDelete({ _id: req.params.id }).exec();
+		const deletedTrack = await Track.deleteOne({ _id: req.params.id }).exec();
 		return res.status(204).json(deletedTrack);
 	} catch (error) {
 		return res.status(500).json({
