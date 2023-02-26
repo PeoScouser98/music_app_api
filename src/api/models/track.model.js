@@ -47,6 +47,7 @@ const trackSchema = mongoose.Schema(
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "User",
 		},
+		fileName: { type: String },
 		duration: {
 			type: Number,
 			require: true,
@@ -59,16 +60,6 @@ const trackSchema = mongoose.Schema(
 		toObject: { virtuals: true },
 	},
 );
-
-// trackSchema.pre("save", function (next) {
-// 	this.trackSrc = `https://docs.google.com/uc?export=download&id=${this.fileId}`;
-// 	this.downloadUrl = `https://drive.google.com/uc?authuser=0&id=${this.fileId}&export=download`;
-// 	next();
-// });
-// trackSchema.pre("find", function (next) {
-// 	if (this.slug === "") this.slug = this.title.split(" ").join("-");
-// 	next();
-// });
 
 trackSchema.virtual("alternativeThumbnail").get(function () {
 	try {

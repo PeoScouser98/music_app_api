@@ -8,6 +8,14 @@ const userSchema = mongoose.Schema(
 			type: String,
 			require: true,
 			trim: true,
+			trim: true,
+			unique: true,
+			validate: {
+				validator: function (value) {
+					return /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(value);
+				},
+				message: (props) => `${props.value} is not a valid email address!`,
+			},
 		},
 		password: {
 			type: String,
@@ -24,15 +32,12 @@ const userSchema = mongoose.Schema(
 
 		avatar: {
 			type: String,
-			require: true,
-			default:
-				"https://firebasestorage.googleapis.com/v0/b/music-app-cdef5.appspot.com/o/pictures%2Fdefault-avatar.png?alt=media&token=a70a307e-5ec6-4375-8e0c-b2e926f8c417",
 		},
 
 		role: {
-			type: Number,
-			enum: [0, 1],
-			default: 0,
+			type: String,
+			enum: ["USER", "ADMIN"],
+			default: "USER",
 		},
 	},
 	{
@@ -50,6 +55,7 @@ userSchema.methods.encryptPassword = function (password) {
 
 userSchema.pre("save", function (next) {
 	this.password = this.encryptPassword(this.password);
+	this.avatar = "https://ui-avatars.com/api/?name=" + this.username?.charAt(0);
 	next();
 });
 

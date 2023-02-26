@@ -56,6 +56,7 @@ export const uploadFile = async (file, dir) => {
 		console.log(error);
 	}
 };
+
 export const deleteFile = async (req, res) => {
 	try {
 		const removedFile = await drive.files.delete(req.body.fileId);

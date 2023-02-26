@@ -17,9 +17,8 @@ export const list = async (req, res) => {
 export const getPlaylistsByUser = async (req, res) => {
 	try {
 		const playlistsByUser = await Playlist.find({ creator: req.params.userId })
-			.populate({ path: "tracks", select: "thumbnail" })
 			.skip(req.query.skip || 0)
-			.limit(req.query.limit)
+			.limit(req.query.limit || 20)
 			.exec();
 		return res.status(200).json(playlistsByUser);
 	} catch (error) {
@@ -68,28 +67,20 @@ export const create = async (req, res) => {
 
 export const updateTracksList = async (req, res) => {
 	try {
-		if (!req.body) throw createHttpError.BadRequest("Invalid track data!");
-
+		if (!req.body.track) throw createHttpError.BadRequest("Invalid track data!");
+		console.log(req.body.track);
 		const playlistHasThisTrack = await Playlist.findOne({ _id: req.params.id, tracks: req.body.track }).exec();
 
 		if (!playlistHasThisTrack) {
-			const afterAdded = await Playlist.findOneAndUpdate(
-				{ _id: req.params.id },
-				{ $addToSet: { tracks: req.body.track } },
-				{ new: true },
-			);
+			const afterAdded = await Playlist.updateOne({ _id: req.params.id }, { $addToSet: { tracks: req.body.track } }, { new: true, upsert: true });
 			return res.status(201).json(afterAdded);
 		}
 
-		const afterRemoved = await Playlist.findOneAndUpdate(
-			{ _id: req.params.id },
-			{ $pull: { tracks: req.body.track } },
-			{ new: true, upsert: true },
-		);
+		const afterRemoved = await Playlist.updateOne({ _id: req.params.id }, { $pull: { tracks: req.body.track } }, { new: true, upsert: true });
 		return res.status(201).json(afterRemoved);
 	} catch (error) {
 		console.log(error.message);
-		res.status(200).json({
+		res.status(400).json({
 			message: error.message,
 			status: error.status,
 		});
@@ -100,7 +91,7 @@ export const deletePlaylist = async (req, res) => {
 	try {
 		if (!req.auth) throw createHttpError("You cannot delete this playlist!");
 		console.log(req.auth);
-		const deletedPlaylist = await Playlist.findOneAndDelete({ creator: req.auth, _id: req.params.id }).exec();
+		const deletedPlaylist = await Playlist.updateOne({ creator: req.auth, _id: req.params.id }).exec();
 		if (!deletedPlaylist) throw createHttpError("You cannot delete this playlist!");
 
 		return res.status(204).json(deletedPlaylist);
