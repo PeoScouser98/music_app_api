@@ -2,7 +2,6 @@ import "dotenv/config";
 import http from "http";
 import app from "./api/app";
 import connectMongoDB from "./config/mongoDB.config";
-// require("./config/redis.config");
 
 const PORT = process.env.PORT || 3001;
 const server = http.createServer(app);
