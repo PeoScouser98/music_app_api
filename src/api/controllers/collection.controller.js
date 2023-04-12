@@ -1,38 +1,39 @@
-import createHttpError from "http-errors";
-import Collection from "../models/collection.model";
+import createHttpError from 'http-errors';
+import Collection from '../models/collection.model';
+import mongoose from 'mongoose';
 
 /* :::::::::::: Get Collection ::::::::::::::::: */
 export const getArtistsCollection = async (req, res) => {
 	try {
-		if (!req.auth) throw createHttpError.Unauthorized("Require signin!");
+		if (!req.auth) throw createHttpError.Unauthorized('Require signin!');
 
 		const { artists } = await Collection.findOne({ creator: req.auth }).exec();
 		return res.status(200).json(artists);
 	} catch (error) {
 		return res.status(404).json({
 			error: error.message,
-			message: "Cannot find followed artist",
+			message: 'Cannot find followed artist',
 		});
 	}
 };
 
 export const getTracksCollection = async (req, res) => {
 	try {
-		if (!req.auth) throw createHttpError.Unauthorized("Required signin!");
+		if (!req.auth) throw createHttpError.Unauthorized('Required signin!');
 		const { tracks } = await Collection.findOne({ creator: req.auth })
 			.populate({
-				path: "tracks",
-				select: "-fileId",
-				populate: { path: "album artists", select: "-wallpaper -desc -__v -artist" },
+				path: 'tracks',
+				select: '-fileId',
+				populate: { path: 'album artists', select: '-wallpaper -desc -__v -artist' },
 			})
-			.select("tracks")
+			.select('tracks')
 			.limit(req.query.limit || 10)
 			.exec();
 		return res.status(200).json(tracks);
 	} catch (error) {
 		console.log(error);
 		return res.status(404).json({
-			message: "Cannot find tracks",
+			message: 'Cannot find tracks',
 			error: error.message,
 		});
 	}
@@ -40,16 +41,16 @@ export const getTracksCollection = async (req, res) => {
 
 export const getAlbumsCollection = async (req, res) => {
 	try {
-		if (!req.auth) throw createHttpError.Unauthorized("Require signin!");
+		if (!req.auth) throw createHttpError.Unauthorized('Require signin!');
 
 		const { albums } = await Collection.findOne({ creator: req.auth })
-			.populate({ path: "albums", populate: { path: "artist", select: "name" } })
-			.select("albums")
+			.populate({ path: 'albums', populate: { path: 'artist', select: 'name' } })
+			.select('albums')
 			.exec();
 		return res.status(200).json(albums);
 	} catch (error) {
 		res.status(404).json({
-			message: "Cannot find liked albums",
+			message: 'Cannot find liked albums',
 		});
 	}
 };
@@ -57,11 +58,11 @@ export const getAlbumsCollection = async (req, res) => {
 /* ::::::::::::: Update Collection :::::::::::::::: */
 export const updateTracksCollection = async (req, res) => {
 	try {
-		if (!req.auth) throw createHttpError.Unauthorized("Require signin!");
+		if (!req.auth) throw createHttpError.Unauthorized('Require signin!');
 		const track = await Collection.findOne({
 			$and: [{ creator: req.auth }, { tracks: req.body._id }],
 		})
-			.select("tracks")
+			.select('tracks')
 			.exec();
 		if (track) {
 			const removedTrack = await Collection.updateOne({ creator: req.auth }, { $pull: { tracks: req.body._id } }, { new: true });
@@ -73,30 +74,36 @@ export const updateTracksCollection = async (req, res) => {
 	} catch (error) {
 		console.log(error.message);
 		return res.status(400).json({
-			message: "Cannot update tracks collection!",
+			message: 'Cannot update tracks collection!',
 		});
 	}
 };
 
 export const updateAritstsCollection = async (req, res) => {
 	try {
-		if (!req.auth) throw createHttpError.Unauthorized("Require signin!");
+		console.log(req.body.artist);
+		const artists = await Collection.findOne({ $and: [{ creator: req.auth }, { artists: req.body.artist }] })
+			.select('artists')
+			.exec();
 
-		const aritst = await Collection.findOne({ creator: req.auth, artists: req.body.artist }).select("artists").exec();
-
-		if (!aritst) {
-			const followedArtist = await Collection.updateOne(
+		if (!artists) {
+			const followedArtist = await Collection.findOneAndUpdate(
 				{ creator: req.auth },
-				{ $addToSet: { artists: req.body.artist } },
+				{ $push: { artists: req.body.artist } },
 				{ new: true, upsert: true },
 			).exec();
 			return res.status(201).json(followedArtist);
 		}
 
-		const unfollowedArtist = await Collection.updateOne({ creator: req.auth }, { $pull: { artists: req.artist } }, { new: true });
-		return res.status(201).json(unfollowedArtist);
+		const unfollowedArtist = await Collection.findOneAndUpdate(
+			{ creator: req.auth },
+			{ $pull: { artists: mongoose.Types.ObjectId(req.body.artist) } },
+			{ new: true },
+		);
+		return res.status(204).json(unfollowedArtist);
 	} catch (error) {
-		return res.status(200).json({
+		console.log(error.message);
+		return res.status(500).json({
 			status: error.status,
 			message: error.message,
 		});
@@ -105,9 +112,9 @@ export const updateAritstsCollection = async (req, res) => {
 
 export const updateAlbumsCollection = async (req, res) => {
 	try {
-		if (!req.auth) throw createHttpError.Unauthorized("Require signin!");
+		if (!req.auth) throw createHttpError.Unauthorized('Require signin!');
 
-		const albums = await Collection.findOne({ creator: req.auth, albums: req.body._id }).select("albums").exec();
+		const albums = await Collection.findOne({ creator: req.auth, albums: req.body._id }).select('albums').exec();
 		if (!albums) {
 			const newAlbum = await Collection.updateOne({ creator: req.auth }, { $addToSet: { albums: req.body._id } }, { new: true, upsert: true }).exec();
 			return res.status(201).json(newAlbum);
