@@ -1,30 +1,30 @@
-import mongoose from "mongoose";
-import mongooseAutoPopulate from "mongoose-autopopulate";
-import mongooseSlugGenerator from "mongoose-slug-generator";
-
+import mongoose from 'mongoose';
+import mongooseAutoPopulate from 'mongoose-autopopulate';
+import mongooseSlugGenerator from 'mongoose-slug-generator';
+import mongoosePaginate from 'mongoose-paginate-v2';
 const trackSchema = mongoose.Schema(
 	{
 		title: {
 			type: String,
 			require: true,
 		},
-		slug: { type: String, slug: ["title"], unique: true },
+		slug: { type: String, slug: ['title'], unique: true },
 		artists: [
 			{
 				type: mongoose.Schema.Types.ObjectId,
-				ref: "Artist",
+				ref: 'Artist',
 				autopopulate: true,
 			},
 		],
 		genre: {
 			type: mongoose.Schema.Types.ObjectId,
-			ref: "Genre",
+			ref: 'Genre',
 			autopopulate: true,
 		},
 		album: {
 			type: mongoose.Schema.Types.ObjectId,
-			ref: "Album",
-			autopopulate: { select: "_id title image -artist" },
+			ref: 'Album',
+			autopopulate: { select: '_id title image -artist' },
 		},
 		fileId: {
 			type: String,
@@ -45,7 +45,7 @@ const trackSchema = mongoose.Schema(
 		},
 		uploader: {
 			type: mongoose.Schema.Types.ObjectId,
-			ref: "User",
+			ref: 'User',
 		},
 		fileName: { type: String },
 		duration: {
@@ -61,14 +61,15 @@ const trackSchema = mongoose.Schema(
 	},
 );
 
-trackSchema.virtual("alternativeThumbnail").get(function () {
+trackSchema.virtual('alternativeThumbnail').get(function () {
 	try {
 		return this.album.image;
 	} catch (error) {
-		return this.artists.length > 0 ? this.artists.at(0).avatar : "/images/default-thumbnail.png";
+		return this.artists.length > 0 ? this.artists.at(0).avatar : '/images/default-thumbnail.png';
 	}
 });
 
-trackSchema.plugin(mongooseAutoPopulate, mongooseSlugGenerator);
+trackSchema.plugin(mongooseAutoPopulate);
+trackSchema.plugin(mongoosePaginate);
 
-export default mongoose.model("Tracks", trackSchema);
+export default mongoose.model('Tracks', trackSchema);

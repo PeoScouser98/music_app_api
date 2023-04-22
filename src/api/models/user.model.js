@@ -1,6 +1,6 @@
-import bcrypt from "bcrypt";
-import mongoose from "mongoose";
-import "dotenv/config";
+import bcrypt from 'bcrypt';
+import mongoose from 'mongoose';
+import 'dotenv/config';
 
 const userSchema = mongoose.Schema(
 	{
@@ -21,7 +21,6 @@ const userSchema = mongoose.Schema(
 			type: String,
 			minLength: 6,
 			maxLength: 16,
-			require: true,
 			trim: true,
 		},
 		username: {
@@ -36,8 +35,8 @@ const userSchema = mongoose.Schema(
 
 		role: {
 			type: String,
-			enum: ["USER", "ADMIN"],
-			default: "USER",
+			enum: ['USER', 'ADMIN'],
+			default: 'USER',
 		},
 	},
 	{
@@ -53,10 +52,24 @@ userSchema.methods.encryptPassword = function (password) {
 	return bcrypt.hashSync(password, bcrypt.genSaltSync(10));
 };
 
-userSchema.pre("save", function (next) {
+userSchema.statics.findOrCreate = function (queryObject, callback) {
+	const _this = this;
+	_this.findOne(queryObject, (err, result) => {
+		return result
+			? callback(err, result)
+			: _this.create(queryObject, (err, result) => {
+					console.log(result);
+					return callback(err, result);
+			  });
+	});
+};
+
+userSchema.pre('save', function (next) {
 	this.password = this.encryptPassword(this.password);
-	this.avatar = "https://ui-avatars.com/api/?name=" + this.username?.charAt(0);
+	if (!this.avatar) {
+		this.avatar = 'https://ui-avatars.com/api/?name=' + this.username?.charAt(0);
+	}
 	next();
 });
 
-export default mongoose.model("Users", userSchema);
+export default mongoose.model('Users', userSchema);

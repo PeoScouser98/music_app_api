@@ -1,6 +1,6 @@
-import "dotenv/config";
-import { google } from "googleapis";
-import { Stream } from "stream";
+import 'dotenv/config';
+import { google } from 'googleapis';
+import { Stream } from 'stream';
 
 /* :::::::::::::::::::: DRIVE UPLOAD :::::::::::::::::::: */
 const CLIENT_ID = process.env.CLIENT_ID;
@@ -12,7 +12,7 @@ const oauth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_U
 oauth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
 const drive = google.drive({
-	version: "v3",
+	version: 'v3',
 	auth: oauth2Client,
 });
 
@@ -21,13 +21,13 @@ const setFilePublic = async (fileId) => {
 		await drive.permissions.create({
 			fileId,
 			requestBody: {
-				role: "reader",
-				type: "anyone",
+				role: 'reader',
+				type: 'anyone',
 			},
 		});
 		return drive.files.get({
 			fileId,
-			fields: "webViewLink,webContentLink",
+			fields: 'webViewLink,webContentLink',
 		});
 	} catch (error) {
 		console.log(error);
@@ -48,7 +48,7 @@ export const uploadFile = async (file, dir) => {
 				body: bufferStream,
 				/* file được upload lấy từ buffer đã được lưu trữ tạm thời trước đó */
 			},
-			fields: "id",
+			fields: 'id',
 		});
 		await setFilePublic(createdFile.data.id);
 		return createdFile;
@@ -62,8 +62,6 @@ export const deleteFile = async (req, res) => {
 		const removedFile = await drive.files.delete(req.body.fileId);
 		res.status(204).json(removedFile);
 	} catch (error) {
-		res.status(400).json({
-			message: "Không xóa được file",
-		});
+		console.log(error.message);
 	}
 };

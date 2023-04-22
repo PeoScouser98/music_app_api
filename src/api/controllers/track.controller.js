@@ -1,8 +1,8 @@
-import Track from "../models/track.model";
-import Comment from "../models/comment.model";
-import { deleteFile } from "../../app/drive-upload";
-import Genre from "../models/genre.model";
-import createHttpError from "http-errors";
+import Track from '../models/track.model';
+import Comment from '../models/comment.model';
+import { deleteFile } from '../services/drive-upload.service';
+import Genre from '../models/genre.model';
+import createHttpError from 'http-errors';
 // lấy ra tất cả bài hát
 export const list = async (req, res) => {
 	try {
@@ -15,7 +15,7 @@ export const list = async (req, res) => {
 		console.log(error);
 		res.status(404).json({
 			status: 404,
-			message: "Cannot find tracks!",
+			message: 'Cannot find tracks!',
 		});
 	}
 };
@@ -28,7 +28,7 @@ export const listByUploader = async (req, res) => {
 		return res.status(200).json(tracks);
 	} catch (error) {
 		return res.status(404).json({
-			message: "Cannot find tracks that uploaded by user",
+			message: 'Cannot find tracks that uploaded by user',
 		});
 	}
 };
@@ -36,7 +36,7 @@ export const listByUploader = async (req, res) => {
 export const listRelatedTracks = async (req, res) => {
 	try {
 		let genre = req.params.genre;
-		if (genre == "undefined")
+		if (genre == 'undefined')
 			Genre.findOne().then((data) => {
 				console.log(data);
 				genre = data._id;
@@ -49,7 +49,7 @@ export const listRelatedTracks = async (req, res) => {
 		console.log(error.message);
 		return res.status(200).json({
 			status: 404,
-			message: "Cannot find related tracks",
+			message: 'Cannot find related tracks',
 		});
 	}
 };
@@ -58,18 +58,18 @@ export const listRelatedTracks = async (req, res) => {
 export const read = async (req, res) => {
 	try {
 		const track = await Track.findOne({ _id: req.params.id })
-			.populate({ path: "artists", select: "_id name avatar" })
-			.populate({ path: "album", select: "_id title image" })
-			.select("-uploader -updatedAt -fileId")
+			.populate({ path: 'artists', select: '_id name avatar' })
+			.populate({ path: 'album', select: '_id title image' })
+			.select('-uploader -updatedAt -fileId')
 			.exec();
-		const comments = await Comment.find({ _id: track._id }).populate("user").exec();
+		const comments = await Comment.find({ _id: track._id }).populate('user').exec();
 		return res.status(200).json({
 			track,
 			comments,
 		});
 	} catch (error) {
 		res.status(404).json({
-			message: "Bài hát không tồn tại",
+			message: 'Bài hát không tồn tại',
 		});
 	}
 };
@@ -77,13 +77,16 @@ export const read = async (req, res) => {
 // upload bài hát
 export const create = async (req, res) => {
 	try {
-		if (!req.auth) throw createHttpError.Forbidden("You have to login to upload track!");
+		const files = req.files;
+		console.log(files);
+
+		if (!req.auth) throw createHttpError.Forbidden('You have to login to upload track!');
 		req.body.uploader = req.auth;
 		console.log(req.body);
 		const newTrack = await new Track(req.body).save();
 		return res.status(201).json(newTrack);
 	} catch (error) {
-		console.log("[ERROR] :>>>", error.message);
+		console.log('[ERROR] :>>>', error.message);
 		return res.status(error.status || 500).json({
 			status: error.status,
 			message: error.message,
@@ -101,7 +104,7 @@ export const update = async (req, res) => {
 	} catch (error) {
 		console.log(error);
 		return res.status(500).json({
-			message: "Cannot update track!",
+			message: 'Cannot update track!',
 		});
 	}
 };
@@ -114,7 +117,7 @@ export const del = async (req, res) => {
 		return res.status(204).json(deletedTrack);
 	} catch (error) {
 		return res.status(500).json({
-			message: "Cannot remove track",
+			message: 'Cannot remove track',
 		});
 	}
 };
