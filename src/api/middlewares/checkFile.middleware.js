@@ -3,7 +3,7 @@ import path from 'path';
 /* ========== middleware check audio file ============ */
 export const checkAudioFileExtension = (file, callback) => {
 	// allowed file
-	const regex = /wav|mp3|flac|png|jpg|jeg|webp/;
+	const regex = /wav|mp3|flac|png|jpg|jpeg|webp/;
 	const isValidExt = regex.test(path.extname(file.originalname).toLowerCase());
 	if (isValidExt) return callback(null, true);
 	else {
