@@ -92,7 +92,7 @@ export const uploadTrack = useCatchAsync(async (req, res) => {
 	const payload = {
 		...req.body,
 		fileId: file.data.id,
-		artists: [req.body.artists],
+		artists: req.body.artists ? [req.body.artists] : null,
 		uploader: req.auth,
 	};
 	if (thumbnail) payload.thumbnail = getDriveDownloadUrl(thumbnail.data.id);

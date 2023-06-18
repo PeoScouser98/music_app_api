@@ -46,7 +46,8 @@ const trackSchema = mongoose.Schema(
 		},
 		uploader: {
 			type: mongoose.Schema.Types.ObjectId,
-			ref: 'User',
+			ref: 'Users',
+			autopopulate: { select: 'username _id' },
 		},
 		duration: {
 			type: Number,
