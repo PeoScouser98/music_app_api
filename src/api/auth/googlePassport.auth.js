@@ -1,6 +1,6 @@
 import passport from 'passport';
 import 'dotenv/config';
-import googleApiConfig from '../../config/googleAPI.config';
+import googleApiConfig from '../../configs/googleAPI.config';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth2';
 import User from '../models/user.model';
 

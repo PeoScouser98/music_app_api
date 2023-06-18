@@ -6,11 +6,7 @@ export const list = async (req, res) => {
 	try {
 		const limit = req.query.limit || 10;
 		const skip = req.query.skip || 0;
-		const playlists = await Playlist.find({ public: true })
-			.skip(skip)
-			.limit(limit)
-			.sort({ createdAt: -1 })
-			.exec();
+		const playlists = await Playlist.find({ public: true }).skip(skip).limit(limit).sort({ createdAt: -1 }).exec();
 		return res.status(200).json(playlists);
 	} catch (error) {
 		return res.json({
@@ -53,9 +49,7 @@ export const listPrivatePlaylistsByUser = async (req, res) => {
 
 export const read = async (req, res) => {
 	try {
-		const playlist = await Playlist.findOne({ _id: req.params.id })
-			.select('-__v -updatedAt -createdAt')
-			.exec();
+		const playlist = await Playlist.findOne({ _id: req.params.id }).select('-__v -updatedAt -createdAt').exec();
 		return res.status(200).json(playlist);
 	} catch (error) {
 		console.log(error);
@@ -83,8 +77,7 @@ export const create = async (req, res) => {
 
 export const updateTracksList = async (req, res) => {
 	try {
-		if (!req.body.track)
-			throw createHttpError.BadRequest('Invalid track data!');
+		if (!req.body.track) throw createHttpError.BadRequest('Invalid track data!');
 		console.log(req.body.track);
 		const playlistHasThisTrack = await Playlist.findOne({
 			_id: req.params.id,
@@ -117,15 +110,13 @@ export const updateTracksList = async (req, res) => {
 
 export const deletePlaylist = async (req, res) => {
 	try {
-		if (!req.auth)
-			throw createHttpError('You cannot delete this playlist!');
+		if (!req.auth) throw createHttpError('You cannot delete this playlist!');
 		console.log(req.auth);
-		const deletedPlaylist = await Playlist.updateOne({
+		const deletedPlaylist = await Playlist.findOneAndDelete({
 			creator: req.auth,
 			_id: req.params.id,
 		}).exec();
-		if (!deletedPlaylist)
-			throw createHttpError('You cannot delete this playlist!');
+		if (!deletedPlaylist) throw createHttpError('You cannot delete this playlist!');
 
 		return res.status(204).json(deletedPlaylist);
 	} catch (error) {

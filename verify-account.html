@@ -24,7 +24,7 @@
 		<script>
 			(async () => {
 				try {
-					const token = new URLSearchParams(location.search).get("token");
+					const token = new URLSearchParams(location.search).get('token');
 					console.log(token);
 					const url = location.origin + `/api/activate-account?token=${token}`;
 					const response = await fetch(url);

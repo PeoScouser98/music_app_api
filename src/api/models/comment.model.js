@@ -1,16 +1,16 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const commentSchema = mongoose.Schema(
 	{
 		track: {
 			type: String,
 			require: true,
-			ref: "track",
+			ref: 'track',
 		},
 		userId: {
 			type: String,
 			require: true,
-			ref: "user",
+			ref: 'user',
 		},
 		content: {
 			type: String,
@@ -24,6 +24,6 @@ const commentSchema = mongoose.Schema(
 	},
 	{
 		timestamps: true,
-	},
+	}
 );
-export default mongoose.model("Comment", commentSchema);
+export default mongoose.model('Comment', commentSchema);

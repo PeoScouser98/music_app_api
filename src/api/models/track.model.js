@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import mongooseAutoPopulate from 'mongoose-autopopulate';
 import mongooseSlugGenerator from 'mongoose-slug-generator';
 import mongoosePaginate from 'mongoose-paginate-v2';
+import getDriveDownloadUrl from '../../utils/getDriveDownloadUrl';
 const trackSchema = mongoose.Schema(
 	{
 		title: {
@@ -47,7 +48,6 @@ const trackSchema = mongoose.Schema(
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'User',
 		},
-		fileName: { type: String },
 		duration: {
 			type: Number,
 			require: true,
@@ -58,8 +58,12 @@ const trackSchema = mongoose.Schema(
 		timestamps: true,
 		toJSON: { virtuals: true },
 		toObject: { virtuals: true },
-	},
+	}
 );
+
+trackSchema.pre('save', function () {
+	this.downloadUrl = getDriveDownloadUrl(this.fileId);
+});
 
 trackSchema.virtual('alternativeThumbnail').get(function () {
 	try {

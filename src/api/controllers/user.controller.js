@@ -2,7 +2,7 @@ import bcrypt, { genSaltSync } from 'bcrypt';
 import 'dotenv/config';
 import createHttpError from 'http-errors';
 import jwt from 'jsonwebtoken';
-import transporter from '../../app/mailer';
+import transporter from '../../configs/mailer';
 import Collection from '../models/collection.model';
 import User from '../models/user.model';
 
@@ -71,7 +71,7 @@ export const recoverPassword = async (req, res) => {
 			},
 			(err, info) => {
 				if (err) return res.status(500).json(err);
-			},
+			}
 		);
 		/* ::::::::::::: finish recover password :::::::::::::::: */
 		return res.status(201).json({ token: token });
@@ -88,7 +88,8 @@ export const resetPassword = async (req, res) => {
 		const { verifyCode, email } = jwt.verify(token, process.env.SECRET_KEY, { algorithms: 'RS256' });
 
 		const user = await User.findOne({ email: email }).exec();
-		if (verifyCode !== req.body.verifyCode || user === null) throw createHttpError.Forbidden('Verify code is invalid!');
+		if (verifyCode !== req.body.verifyCode || user === null)
+			throw createHttpError.Forbidden('Verify code is invalid!');
 
 		const newPassword = bcrypt.hashSync(req.body.password, genSaltSync(10));
 		const response = await User.findOneAndUpdate({ email: email }, { password: newPassword }, { new: true });

@@ -3,13 +3,12 @@ import { google } from 'googleapis';
 import { Stream } from 'stream';
 
 /* :::::::::::::::::::: DRIVE UPLOAD :::::::::::::::::::: */
-const CLIENT_ID = process.env.CLIENT_ID;
-const CLIENT_SECRET = process.env.CLIENT_SECRET;
-const REDIRECT_URI = process.env.REDIRECT_URI;
-const REFRESH_TOKEN = process.env.REFRESH_TOKEN;
+const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, REDIRECT_URI, REFRESH_TOKEN } = process.env;
+
 // get auth client
-const oauth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+const oauth2Client = new google.auth.OAuth2(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, REDIRECT_URI);
 oauth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
+oauth2Client.getAccessToken();
 
 const drive = google.drive({
 	version: 'v3',
@@ -34,7 +33,7 @@ const setFilePublic = async (fileId) => {
 	}
 };
 // folderId: 1lPcnj0jxiOXnKzGb4Ueku12L9i1L46FL
-export const uploadFile = async (file, dir) => {
+export const uploadFile = async (file, dir = process.env.MUSIC_DIR) => {
 	try {
 		/* tạo nơi lưu trữ file tạm thời (buffer) -> file sẽ được upload qua stream */
 		const bufferStream = new Stream.PassThrough();
@@ -42,7 +41,7 @@ export const uploadFile = async (file, dir) => {
 		const createdFile = await drive.files.create({
 			requestBody: {
 				name: file.originalname,
-				parents: [process.env.MUSIC_DIR],
+				parents: [dir],
 			},
 			media: {
 				body: bufferStream,
@@ -53,7 +52,7 @@ export const uploadFile = async (file, dir) => {
 		await setFilePublic(createdFile.data.id);
 		return createdFile;
 	} catch (error) {
-		console.log(error);
+		console.log(error.message);
 	}
 };
 

@@ -9,7 +9,16 @@ import collectionRouter from './collection.route';
 import searchRouter from './search.route';
 
 const router = express.Router();
-const appRoutes = [trackRouter, userRouter, artistRouter, genreRouter, playListRouter, albumRouter, collectionRouter, searchRouter];
+const appRoutes = [
+	trackRouter,
+	userRouter,
+	artistRouter,
+	genreRouter,
+	playListRouter,
+	albumRouter,
+	collectionRouter,
+	searchRouter,
+];
 
 appRoutes.forEach((route) => router.use(route));
 

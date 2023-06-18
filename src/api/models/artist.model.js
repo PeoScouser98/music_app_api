@@ -1,5 +1,5 @@
-import mongoose from "mongoose";
-import mongooseSlugGenerator from "mongoose-slug-generator";
+import mongoose from 'mongoose';
+import mongooseSlugGenerator from 'mongoose-slug-generator';
 const artistSchema = mongoose.Schema(
 	{
 		name: {
@@ -8,12 +8,12 @@ const artistSchema = mongoose.Schema(
 		},
 		avatar: {
 			type: String,
-			default: "default.png",
+			default: 'default.png',
 			require: true,
 		},
 		wallpaper: {
 			type: String,
-			default: "default.png",
+			default: 'default.png',
 			require: true,
 		},
 		desc: {
@@ -23,9 +23,9 @@ const artistSchema = mongoose.Schema(
 	{
 		strictPopulate: false,
 		toJSON: { virtuals: true },
-	},
+	}
 );
 
 artistSchema.plugin(mongooseSlugGenerator);
 
-export default mongoose.model("Artist", artistSchema);
+export default mongoose.model('Artist', artistSchema);

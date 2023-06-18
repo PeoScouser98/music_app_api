@@ -1,4 +1,4 @@
-import Comment from "../models/comment.model";
+import Comment from '../models/comment.model';
 
 export const create = async (req, res) => {
 	try {
@@ -6,7 +6,7 @@ export const create = async (req, res) => {
 		return res.status(201).json(newComment);
 	} catch (error) {
 		return res.status(400).json({
-			message: "Không post được comment",
+			message: 'Không post được comment',
 		});
 	}
 };
@@ -17,7 +17,7 @@ export const update = async (req, res) => {
 		return res.status(200).json(updatedComment);
 	} catch (error) {
 		return res.status(400).json({
-			message: "Không edit được comment",
+			message: 'Không edit được comment',
 		});
 	}
 };
@@ -28,7 +28,7 @@ export const del = async (req, res) => {
 		return res.status(200).json(deletedComment);
 	} catch (error) {
 		return res.status(400).json({
-			message: "Không xóa được comment",
+			message: 'Không xóa được comment',
 		});
 	}
 };

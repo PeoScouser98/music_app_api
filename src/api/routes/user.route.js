@@ -1,37 +1,12 @@
 import express from 'express';
-import {
-	activateAccount,
-	getUser,
-	list,
-	recoverPassword,
-	resetPassword,
-	update,
-} from '../controllers/user.controller';
-import {
-	loginWithEmail,
-	refreshToken,
-	register,
-	loginWithGoogle,
-	logout,
-} from '../controllers/auth.controller';
+import { activateAccount, getUser, list, recoverPassword, resetPassword, update } from '../controllers/user.controller';
+import { loginWithEmail, refreshToken, register, loginWithGoogle, logout } from '../controllers/auth.controller';
 import { checkAccessToken } from '../middlewares/checkAuth.middleware';
 import passport from 'passport';
-import globalConfig from '../../config/global.config';
+import globalConfig from '../../configs/global.config';
 
 const router = express.Router();
-router.get(
-	'/auth/google/login',
-	passport.authenticate('google', { scope: ['email', 'profile'] })
-);
-
-router.get(
-	'/auth/google/callback',
-	passport.authenticate('google', {
-		failureRedirect: globalConfig.frontendURL + '/login',
-	}),
-	loginWithGoogle
-);
-
+router.get('/auth/google/login', loginWithGoogle);
 router.get('/users', list);
 router.get('/user', checkAccessToken, getUser);
 router.get('/refresh-token/:userId', refreshToken);

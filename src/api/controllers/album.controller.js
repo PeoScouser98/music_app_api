@@ -70,7 +70,11 @@ export const update = async (req, res) => {
 export const removeFromAlbum = async (req, res) => {
 	try {
 		console.log('remove object id: ', req.body.track);
-		const updatedAlbum = await Album.updateOne({ _id: req.params.id }, { $pull: { tracks: req.body.track } }, { new: true, upsert: true }).exec();
+		const updatedAlbum = await Album.updateOne(
+			{ _id: req.params.id },
+			{ $pull: { tracks: req.body.track } },
+			{ new: true, upsert: true }
+		).exec();
 		return res.status(200).json(updatedAlbum.tracks);
 	} catch (error) {
 		console.log(error);

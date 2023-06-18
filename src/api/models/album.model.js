@@ -1,5 +1,5 @@
-import mongoose from "mongoose";
-import mongooseAutoPopulate from "mongoose-autopopulate";
+import mongoose from 'mongoose';
+import mongooseAutoPopulate from 'mongoose-autopopulate';
 
 const albumSchema = mongoose.Schema(
 	{
@@ -14,20 +14,20 @@ const albumSchema = mongoose.Schema(
 		},
 		artist: {
 			type: mongoose.Types.ObjectId,
-			ref: "Artist",
+			ref: 'Artist',
 			require: true,
-			autopopulate: { select: "_id name avatar" },
+			autopopulate: { select: '_id name avatar' },
 		},
 		image: {
 			type: String,
-			default: "",
+			default: '',
 		},
 	},
 	{
 		strictPopulate: false,
 		timestamps: true,
-	},
+	}
 );
 
 albumSchema.plugin(mongooseAutoPopulate);
-export default mongoose.model("Album", albumSchema);
+export default mongoose.model('Album', albumSchema);

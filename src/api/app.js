@@ -1,16 +1,15 @@
 import compression from 'compression';
+import cookieParser from 'cookie-parser';
 import cors from 'cors';
+import 'dotenv/config';
 import express from 'express';
 import session, { MemoryStore } from 'express-session';
 import morgan from 'morgan';
 import passport from 'passport';
 import path from 'path';
-import rootRouter from './routes/index';
-import 'dotenv/config';
 import './auth/googlePassport.auth';
 import './auth/localPassport.auth';
-import globalConfig from '../config/global.config';
-import cookieParser from 'cookie-parser';
+import rootRouter from './routes/index';
 
 const app = express();
 
@@ -18,9 +17,8 @@ const app = express();
 
 app.use(
 	cors({
-		origin: globalConfig.frontendURL,
+		origin: '*',
 		methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
-		credentials: true,
 	})
 ); // public API
 app.use(express.json()); // using JSON data type

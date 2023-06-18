@@ -1,7 +1,6 @@
 import passport from 'passport';
-import User from '../models/user.model';
 import { Strategy as LocalStrategy } from 'passport-local';
-import createHttpError from 'http-errors';
+import User from '../models/user.model';
 
 passport.use(
 	new LocalStrategy(

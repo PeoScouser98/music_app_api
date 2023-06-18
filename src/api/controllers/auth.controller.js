@@ -1,31 +1,15 @@
-import bcrypt, { genSaltSync } from 'bcrypt';
 import 'dotenv/config';
 import createHttpError from 'http-errors';
 import jwt from 'jsonwebtoken';
-import transporter from '../../app/mailer';
+import transporter from '../../configs/mailer';
 import Collection from '../models/collection.model';
 import User from '../models/user.model';
-import globalConfig from '../../config/global.config';
-import { queriesStringify } from '../../utils/queryString';
-import { popupResponse } from 'popup-tools';
 
 /* :::::::::::::::::: Sign in ::::::::::::::::::::: */
 export const loginWithEmail = async (req, res) => {
 	try {
-		console.log(req.user);
 		const user = req.user;
-		const accessToken = jwt.sign(
-			{ credential: user._id },
-			process.env.SECRET_KEY,
-			{ expiresIn: '15m' }
-		);
-		res.cookie('access_token', accessToken, {
-			maxAge: 1000 * 60 * 60 * 24 * 30 * 365,
-			httpOnly: true,
-		});
-		res.cookie('uid', req.user._id.toString().trim(), {
-			maxAge: 1000 * 60 * 60 * 24 * 30 * 365,
-		});
+		const accessToken = jwt.sign({ credential: user._id }, process.env.SECRET_KEY, { expiresIn: '15m' });
 		return res.json({
 			accessToken: accessToken,
 			authenticated: true,
@@ -42,26 +26,52 @@ export const loginWithEmail = async (req, res) => {
 
 export const loginWithGoogle = async (req, res) => {
 	try {
-		const accessToken = jwt.sign(
-			{ credential: req.user?._id },
-			process.env.SECRET_KEY,
-			{ expiresIn: '15m' }
-		);
-		res.cookie('access_token', accessToken, {
-			maxAge: 1000 * 60 * 60 * 24 * 30 * 365,
-			httpOnly: true,
-		});
-		res.cookie('uid', req.user._id.toString().trim(), {
-			maxAge: 1000 * 60 * 60 * 24 * 30 * 365,
-		});
-		return res.end(
-			popupResponse({
+		const token = !!req.headers.authorization ? req.headers.authorization.replace('Bearer', '').trim() : null;
+		if (!token) {
+			throw createHttpError.BadRequest('Access token must be provided!');
+		}
+		const googleUser = await (
+			await fetch(process.env.GOOGLE_APIS_URL, {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			})
+		).json();
+
+		if (!googleUser) {
+			throw createHttpError.NotFound('Account does not exist');
+		}
+		const existedUser = await User.findOne({ email: googleUser.email });
+		if (!existedUser) {
+			const newUser = await new User({
+				email: googleUser.email,
+				avatar: googleUser.picture,
+				username: googleUser.name,
+			}).save();
+
+			await new Collection({
+				creator: newUser._id,
+				albums: [],
+				tracks: [],
+				artists: [],
+			}).save();
+
+			const accessToken = jwt.sign({ credential: newUser?._id }, process.env.SECRET_KEY, { expiresIn: '15m' });
+			return res.status(200).json({
 				accessToken: accessToken,
 				authenticated: true,
-				uid: req.user?._id,
-				user: req.user,
-			})
-		);
+				uid: newUser?._id,
+				user: newUser,
+			});
+		}
+
+		const accessToken = jwt.sign({ credential: existedUser?._id }, process.env.SECRET_KEY, { expiresIn: '15m' });
+		return res.status(200).json({
+			accessToken: accessToken,
+			authenticated: true,
+			uid: existedUser?._id,
+			user: existedUser,
+		});
 	} catch (error) {
 		return res.status(error.status || 500).json({
 			message: error.message,
@@ -75,11 +85,7 @@ export const refreshToken = async (req, res) => {
 	try {
 		const user = await User.findOne({ _id: req.params.userId }).exec();
 		if (!user) throw createHttpError.BadRequest('Cannot find user');
-		const newAccessToken = jwt.sign(
-			{ credential: user._id },
-			process.env.SECRET_KEY,
-			{ expiresIn: '15m' }
-		);
+		const newAccessToken = jwt.sign({ credential: user._id }, process.env.SECRET_KEY, { expiresIn: '15m' });
 		console.log(newAccessToken);
 		return res.status(200).json(newAccessToken);
 		/**
@@ -100,8 +106,7 @@ export const refreshToken = async (req, res) => {
 export const register = async (req, res) => {
 	try {
 		const account = await User.findOne({ email: req.body.email }).exec();
-		if (account)
-			throw createHttpError.BadRequest('Account already existed!');
+		if (account) throw createHttpError.BadRequest('Account already existed!');
 		// return res.status(200).json({
 		// 	status: 400,
 		// 	message: "Account already existed!",
@@ -111,8 +116,7 @@ export const register = async (req, res) => {
 			expiresIn: '5m',
 		});
 
-		const baseUrl =
-			req.protocol + '://' + req.get('host') + '/activate-account';
+		const baseUrl = req.protocol + '://' + req.get('host') + '/activate-account';
 		console.log(req.get('host'));
 		await transporter.sendMail(
 			{

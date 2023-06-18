@@ -1,8 +1,11 @@
 import Track from '../models/track.model';
 import Comment from '../models/comment.model';
-import { deleteFile } from '../services/drive-upload.service';
 import Genre from '../models/genre.model';
 import createHttpError from 'http-errors';
+import { deleteFile, uploadFile } from '../services/googleDrive.service';
+import useCatchAsync from '../../utils/useCatchAsync';
+import getDriveDownloadUrl from '../../utils/getDriveDownloadUrl';
+
 // lấy ra tất cả bài hát
 export const list = async (req, res) => {
 	try {
@@ -55,7 +58,7 @@ export const listRelatedTracks = async (req, res) => {
 };
 
 // lấy 1 bài hát
-export const read = async (req, res) => {
+export const getOneTrack = async (req, res) => {
 	try {
 		const track = await Track.findOne({ _id: req.params.id })
 			.populate({ path: 'artists', select: '_id name avatar' })
@@ -75,26 +78,29 @@ export const read = async (req, res) => {
 };
 
 // upload bài hát
-export const create = async (req, res) => {
-	try {
-		const files = req.files;
-		console.log(files);
-
-		if (!req.auth) throw createHttpError.Forbidden('You have to login to upload track!');
-		req.body.uploader = req.auth;
-		console.log(req.body);
-		const newTrack = await new Track(req.body).save();
-		return res.status(201).json(newTrack);
-	} catch (error) {
-		console.log('[ERROR] :>>>', error.message);
-		return res.status(error.status || 500).json({
-			status: error.status,
-			message: error.message,
-		});
+export const uploadTrack = useCatchAsync(async (req, res) => {
+	if (!req.auth) throw createHttpError.Forbidden('You have to login to upload track!');
+	if (!req.files.length) throw createHttpError.BadRequest('No file uploaded !');
+	const fileToUpload = req.files.find((file) => file.mimetype.includes('audio'));
+	const thumbnailToUpload = req.files.find((file) => file.mimetype.includes('image'));
+	const uploadPromises = [Promise.resolve(uploadFile(fileToUpload, process.env.MUSIC_DIR))];
+	if (thumbnailToUpload) {
+		uploadPromises.push(Promise.resolve(uploadFile(thumbnailToUpload, process.env.IMAGE_DIR)));
 	}
-};
+	const [file, thumbnail] = await Promise.all(uploadPromises);
 
-export const update = async (req, res) => {
+	const payload = {
+		...req.body,
+		fileId: file.data.id,
+		artists: [req.body.artists],
+		uploader: req.auth,
+	};
+	if (thumbnail) payload.thumbnail = getDriveDownloadUrl(thumbnail.data.id);
+	const newTrack = await new Track(payload).save();
+	return res.status(201).json(newTrack);
+});
+
+export const updateTrack = async (req, res) => {
 	try {
 		const updatedTrack = await Track.updateOne({ _id: req.params.id }, req.body, {
 			new: true,
@@ -109,11 +115,13 @@ export const update = async (req, res) => {
 	}
 };
 
-export const del = async (req, res) => {
+export const deleteTrack = async (req, res) => {
 	try {
 		const { fileId } = await Track.findOne({ _id: req.params.id }).exec();
 		await deleteFile(fileId);
-		const deletedTrack = await Track.deleteOne({ _id: req.params.id }).exec();
+		const deletedTrack = await Track.deleteOne({
+			_id: req.params.id,
+		}).exec();
 		return res.status(204).json(deletedTrack);
 	} catch (error) {
 		return res.status(500).json({

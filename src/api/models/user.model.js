@@ -41,7 +41,7 @@ const userSchema = mongoose.Schema(
 	},
 	{
 		timestamps: true,
-	},
+	}
 );
 
 userSchema.methods.authenticate = function (password) {
@@ -52,16 +52,11 @@ userSchema.methods.encryptPassword = function (password) {
 	return bcrypt.hashSync(password, bcrypt.genSaltSync(10));
 };
 
-userSchema.statics.findOrCreate = function (queryObject, callback) {
+userSchema.statics.findOrCreate = async function (queryObject, callback) {
 	const _this = this;
-	_this.findOne(queryObject, (err, result) => {
-		return result
-			? callback(err, result)
-			: _this.create(queryObject, (err, result) => {
-					console.log(result);
-					return callback(err, result);
-			  });
-	});
+	const result = await _this.findOne(queryObject);
+	if (!result) return await _this.create(queryObject);
+	return result;
 };
 
 userSchema.pre('save', function (next) {

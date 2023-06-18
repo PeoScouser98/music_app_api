@@ -1,8 +1,16 @@
-import express from "express";
-import multer from "multer";
-import { create, del, list, listByUploader, listRelatedTracks, read, update } from "../controllers/track.controller";
-import { checkAccessToken } from "../middlewares/checkAuth.middleware";
-import { checkAudioFileExtension } from "../middlewares/checkFile.middleware";
+import express from 'express';
+import multer from 'multer';
+import {
+	uploadTrack,
+	deleteTrack,
+	list,
+	listByUploader,
+	listRelatedTracks,
+	getOneTrack,
+	updateTrack,
+} from '../controllers/track.controller';
+import { checkAccessToken } from '../middlewares/checkAuth.middleware';
+import { checkAudioFileExtension } from '../middlewares/checkFile.middleware';
 
 const router = express.Router();
 
@@ -13,17 +21,12 @@ const upload = multer({
 	},
 });
 
-router.get("/tracks", list);
-router.get("/tracks/user-uploaded", checkAccessToken, listByUploader);
-router.get("/tracks/related/:genre", listRelatedTracks);
-router.get("/tracks/:id", read);
-router.post("/tracks", checkAccessToken, create);
-router.patch("/tracks/:id", checkAccessToken, update);
-router.delete("/tracks/:id", checkAccessToken, del);
-
-// router.post("/track-upload", checkAccessToken, upload.single("trackSrc"), async (req, res) => {
-// 	const trackSrc = await uploadFile(req.file, process.env.MUSIC_DIR);
-// 	return res.status(202).json(trackSrc.data); // Accepted! -> return file id and then call API to create new song with file id
-// });
+router.get('/tracks', list);
+router.get('/tracks/user-uploaded', checkAccessToken, listByUploader);
+router.get('/tracks/related/:genre', listRelatedTracks);
+router.get('/tracks/:id', getOneTrack);
+router.post('/tracks', checkAccessToken, upload.any(), uploadTrack);
+router.patch('/tracks/:id', checkAccessToken, updateTrack);
+router.delete('/tracks/:id', checkAccessToken, deleteTrack);
 
 export default router;
