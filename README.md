@@ -1,21 +1,35 @@
-## Cài đặt môi trường cho project
+# Backend API cho ứng dụng nghe nhạc
 
-### Cài đặt express
+## Mô tả dự án
+Dự án này là một backend API để phục vụ ứng dụng nghe nhạc. API sẽ cung cấp các endpoints để quản lý danh sách bài hát, người dùng, playlist và các chức năng liên quan.
 
-    npm install express
+## Công nghệ sử dụng
+- Node.js: môi trường chạy mã JavaScript phía máy chủ
+- Express: framework Node.js để xây dựng API
+- MongoDB: cơ sở dữ liệu NoSQL để lưu trữ dữ liệu
+- Webpack: bundle project
+- Vercel: deploy project trên server của Vercel
 
-### Cài đặt nodemon (live server), dotenv (biến môi trường), babel (biên dịch ES6/ES7 -> ES5)
+## Cách setup dự án
+1. Clone dự án từ repository:
+```
+git clone https://github.com/PeoScouser98/music_app_api.git server
+```
+2. Di chuyển vào thư mục dự án:
+```
+cd server
+```
+3. Cài đặt các dependencies:
+```
+npm install
+```
+4. Run project trên local:
+```
+npm run dev
+```
+Dự án sẽ được khởi chạy trên `http://localhost:3001` hoặc cổng được cấu hình trong file `.env`
 
-    npm i --save-dev nodemon babel-cli babel-preset-env babel-preset-stage-0 dotenv
-
-### Cài đặt mongoose (connect đến database)
-
-    npm install mongoose
-
-### Cài đặt cors (Public API cho client sử dụng)
-
-    npm install cors
-
-### Cài đặt multer (Upload file)
-
-    npm install --save multer
+6. Bundle project:
+```
+npm run build
+```
